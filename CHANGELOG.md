@@ -35,7 +35,8 @@ The repo now matches what is live on archgenlabs.com (which had been edited dire
 - Footer links get about 38px tall tap areas on touch screens (were 19–22px), pixel-identical layout.
 - The address bar sliding in and out no longer reallocates the ASCII and spark canvases mid-scroll.
 
-**Desktop**
+**Tablet and desktop**
+- "Inside a run": the poster is shorter (clamp(280px, 30vw + 40px, 480px)), so the band before the sample-session caption is about halved: 188 → 100px at 1440 wide.
 - The Contact pill's hover keeps its glass light, now tinted with the brand red (#D65148), instead of washing out to pink.
 
 **Fixes**
