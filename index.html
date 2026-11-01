@@ -288,7 +288,7 @@ h1,h2,h3{margin:0;font-weight:600;text-wrap:balance}
 .ask:hover,.ask[aria-pressed="true"]{color:var(--signal)}
 .ask:hover::after,.ask[aria-pressed="true"]::after{color:var(--signal);transform:translateX(4px)}
 .ask:focus-visible{outline:2px solid var(--flare);outline-offset:2px}
-@media (max-width:760px){.ask{padding:12px 0;min-height:44px}}
+@media (max-width:760px){.asks{display:none}}   /* phones: no Ask the agent list; the demo below still runs on its own */
 /* the stage is the package outline: steel, pin-1 corner cut */
 .stage{position:relative;display:flex;background:var(--steel);padding:32px 16px 0 32px;
   clip-path:polygon(56px 0,100% 0,100% 100%,0 100%,0 56px);animation:shutter 1.1s cubic-bezier(.7,0,.2,1) both}
@@ -845,12 +845,23 @@ main{position:relative;z-index:1;background:var(--ink);display:flow-root}
 /* ---------- hero scroll stack (after React Bits ScrollStack): as the next section rises, the console card stays nearly
    pinned, shrinks back and dims, and "Built for physical design" slides over it as the next card. --sp is 0..1 progress,
    --sy the pin offset. Off with reduced motion. */
-.stage{transform-origin:50% 0;transform:translateY(var(--sy, 0px)) scale(calc(1 - var(--sp, 0) * .1));will-change:transform}
+.stage-pin{display:grid;min-width:0;transform-origin:50% 0;transform:translateY(var(--sy, 0px)) scale(calc(1 - var(--sp, 0) * .1));will-change:transform}
 .stage::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:var(--paper);opacity:calc(var(--sp, 0) * .28)}
+/* where the browser can, the stack is tied to the scroll itself (a view timeline on the next section), so it runs on the
+   compositor in step with the finger: no script, no lag behind the scroll on phones. Same range as the script fallback:
+   from the next section's top at the bottom of the screen until it is 64px (the header) from the top. */
+@supports (animation-timeline:view()) and (timeline-scope:none){
+  [data-page="home"]{timeline-scope:--nx}
+  .bnext{view-timeline:--nx block}
+  .stage-pin{transform:none;animation:stack linear both;animation-timeline:--nx;animation-range:cover 0px cover calc(100svh - 64px)}
+  .stage::after{opacity:0;animation:dim linear both;animation-timeline:--nx;animation-range:cover 0px cover calc(100svh - 64px)}
+}
+@keyframes stack{from{transform:none}to{transform:translateY(calc((100svh - 64px) * .72)) scale(.9)}}
+@keyframes dim{from{opacity:0}to{opacity:.28}}
 .bnext{z-index:1}
 .bnext::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:100vw;margin-left:-50vw;z-index:-2;pointer-events:none;
   background:var(--ink);border-radius:28px 28px 0 0;box-shadow:0 -1px 0 var(--line-2),0 -28px 48px -28px rgba(14,19,23,.35)}
-@media (prefers-reduced-motion:reduce){.stage{transform:none}.stage::after{display:none}}
+@media (prefers-reduced-motion:reduce){.stage-pin{transform:none;animation:none}.stage::after{display:none}}
 /* ---------- AnimatedContent (vanilla port of React Bits AnimatedContent): blocks rise and fade in once as they scroll in.
    .ac-hide is only ever added by script, so with no script everything stays visible. */
 .ac-hide{opacity:0}
@@ -990,6 +1001,7 @@ main{position:relative;z-index:1;background:var(--ink);display:flow-root}
         </div>
         
       </div>
+      <div class="stage-pin">
       <div class="stage" id="stage">
         <div class="frag" id="frag" data-ui role="group" aria-label="Archgen agent demo: pick a block on the die and the agent checks it">
           <div class="frag-bar"><span class="frag-lights" aria-hidden="true"><i></i><i></i><i></i></span><b>archgen agent</b><span class="frag-path"><span class="frag-sep">/</span> top_ctrl</span><span class="ll" id="frag-ll" data-status="idle"><span class="ll-grid" aria-hidden="true"><span class="ll-layer ll-run"><i style="animation-delay:0ms"></i><i style="animation-delay:108ms"></i><i style="animation-delay:216ms"></i><i style="animation-delay:756ms"></i><i class="hole"></i><i style="animation-delay:324ms"></i><i style="animation-delay:648ms"></i><i style="animation-delay:540ms"></i><i style="animation-delay:432ms"></i></span><span class="ll-layer ll-mark"><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i></i><i class="on"></i><i></i></span></span><span class="frag-state" id="frag-state" role="status">idle</span><span class="ll-timer" id="frag-timer" aria-hidden="true">0.0s</span></span></div>
@@ -1043,6 +1055,7 @@ main{position:relative;z-index:1;background:var(--ink);display:flow-root}
           </div>
           <div class="fstatus" aria-hidden="true"><span>⎇ main</span><span>● agent online</span><span>session 0x7f3a</span><span class="sp">Ln <span id="fs-ln">0</span> · UTF-8</span></div>
         </div>
+      </div>
       </div>
     </div>
   </section>
@@ -1462,8 +1475,10 @@ main{position:relative;z-index:1;background:var(--ink);display:flow-root}
     const ramp = k => { k = Math.min(.999, Math.max(0, k)) * (RAMP.length - 1); const i = k | 0, f = k - i, a = RAMP[i], b = RAMP[i + 1];
       return `rgb(${a[0] + (b[0] - a[0]) * f | 0},${a[1] + (b[1] - a[1]) * f | 0},${a[2] + (b[2] - a[2]) * f | 0})`; };
     function size(){
-      const r = wrap.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1);
-      W = Math.max(1, r.width); H = Math.max(1, r.height);
+      const r = wrap.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1);
+      // the address bar sliding on phones fires resize without changing this box: keep the canvas (reallocating clears it)
+      if(Math.abs(r.width - W) < 1 && Math.abs(r.height - H) < 1 && d === dpr && cv.width) return;
+      dpr = d; W = Math.max(1, r.width); H = Math.max(1, r.height);
       cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
       g.setTransform(dpr, 0, 0, dpr, 0, 0); g.textAlign = 'center'; g.textBaseline = 'middle';
       g.font = `600 ${CELL * .78}px "Cascadia Code","Cascadia Mono",Consolas,monospace`;
@@ -1737,8 +1752,10 @@ void main(){
 
   /* ---------------- hero scroll stack: progress from how far the next section has risen over the hero ---------------- */
   defer(function(){
-    const hero = document.querySelector('.phero'), next = document.querySelector('.bnext');
+    const hero = document.querySelector('.stage-pin'), next = document.querySelector('.bnext');
     if(!hero || !next || reduce) return;
+    // the CSS view timeline drives it on the compositor where supported; this is the fallback for older browsers
+    if(window.CSS && CSS.supports('animation-timeline: view()') && CSS.supports('timeline-scope: none')) return;
     const HEADER = 64;
     function update(){
       if(current !== 'home') return;
@@ -1757,8 +1774,11 @@ void main(){
     const sc = document.getElementById('sparks'), sx = sc.getContext('2d');
     const COLOR = '#D65148', COUNT = 8, SIZE = 11, RADIUS = 22, DUR = 420;
     let sparks = [], raf = 0, dpr = 1;
-    function size(){ dpr = Math.min(2, devicePixelRatio || 1); sc.width = innerWidth * dpr; sc.height = innerHeight * dpr; }
-    size(); addEventListener('resize', size);
+    // phones fire resize as the address bar slides in and out mid-scroll: only reallocate when the width changes or the screen grows
+    let sw = 0, sh = 0;
+    function size(){ const w = innerWidth, h = innerHeight; if(w === sw && h <= sh) return; sw = w; sh = h;
+      dpr = Math.min(2, devicePixelRatio || 1); sc.width = w * dpr; sc.height = sh * dpr; }
+    size(); addEventListener('resize', size, {passive: true});
     const easeOut = k => k * (2 - k);
     function draw(now){
       sx.setTransform(dpr, 0, 0, dpr, 0, 0); sx.clearRect(0, 0, innerWidth, innerHeight);
