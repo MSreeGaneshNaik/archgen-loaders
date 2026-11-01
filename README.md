@@ -253,7 +253,7 @@ Headless test browsers have no GPU; check motion on real hardware.
 
 `assets/logo/archgen-labs-lockup.svg` is the ARCHGEN LABS wordmark from archgenlabs.com, traced to a vector path; the header and footer use the same path inline.
 
-The loading screen is **Route**: pin one lights, the AG net routes out of it, then the red pin flies to the header and writes ARCHGEN LABS out of itself (about 2.75 s). It plays once per browser tab, a tap or key skips it, and reduced motion gets the finished logo and a fade. It is `assets/js/archgen-loader-route.js` (first thing in `<body>`) with `assets/css/archgen-loader.css`; it fires `archgen:loaded` on `<body>` when done, and the Home hero waits for that before its reveal.
+The loading screen is **Route**: pin one lights, the AG net routes out of it, then the red pin flies to the header and writes ARCHGEN LABS out of itself (about 2.75 s). It plays once per browser tab, a tap or key skips it, and reduced motion gets the finished logo and a fade. Its sources are `assets/js/archgen-loader-route.js` and `assets/css/archgen-loader.css`; the build inlines them into every page (first thing in `<body>`, and in `<head>`), so edit the sources and run `sh tools/build.sh`. It fires `archgen:loaded` on `<body>` when done, and the Home hero waits for that before its reveal.
 
 To make the share card again: `node tools/social/og.mjs` (edit `tools/social/og.html`).
 
