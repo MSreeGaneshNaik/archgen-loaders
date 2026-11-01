@@ -1788,7 +1788,8 @@ void main(){
     let sparks = [], raf = 0, dpr = 1;
     // phones fire resize as the address bar slides in and out mid-scroll: only reallocate when the width changes or the screen grows
     let sw = 0, sh = 0;
-    function size(){ const w = innerWidth, h = innerHeight; if(w === sw && h <= sh) return; sw = w; sh = h;
+    const phone = matchMedia('(max-width: 699px)');   // no click spark on phones
+    function size(){ const w = innerWidth, h = innerHeight; if(phone.matches || (w === sw && h <= sh)) return; sw = w; sh = h;
       dpr = Math.min(2, devicePixelRatio || 1); sc.width = w * dpr; sc.height = sh * dpr; }
     size(); addEventListener('resize', size, {passive: true});
     const easeOut = k => k * (2 - k);
@@ -1811,7 +1812,7 @@ void main(){
       if(!raf){ sx.clearRect(0, 0, innerWidth, innerHeight); sc.classList.remove('on'); }
     }
     document.addEventListener('pointerdown', e => {
-      if(e.button !== 0) return;
+      if(e.button !== 0 || phone.matches) return;
       sparks.push({x: e.clientX, y: e.clientY, t: performance.now(), a: Math.random() * .4}); sc.classList.add('on');
       if(!raf) raf = requestAnimationFrame(draw);
     }, {passive:true});
