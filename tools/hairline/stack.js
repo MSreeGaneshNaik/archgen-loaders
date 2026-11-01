@@ -68,6 +68,29 @@ function mount({ stage, svg, read, layout }, value) {
   const az = spring(HOME, { k: 38, c: 11, eps: 0.05 });
   let drawn = "", order = "";
 
+  // phones: scrolling plays the stack. As the figure rises through the screen it opens from closed to wide and turns
+  // through a quarter of a view, both by retargeting the springs above, so it glides behind the scroll and a drag can
+  // still take over (azBase keeps where the drag left it). Desktop keeps hover and drag. Off with reduced motion.
+  const phone = matchMedia("(max-width: 699px)"), still = matchMedia("(prefers-reduced-motion: reduce)");
+  let sOpen = null, sTurn = 0, azBase = HOME, sRaf = 0;
+  const ease = (t) => t * t * (3 - 2 * t);
+  function fromScroll() {
+    sRaf = 0;
+    if (!phone.matches || still.matches) {
+      if (sOpen !== null) { sOpen = null; sTurn = 0; if (!dragging) az.t = azBase; retarget(); }
+      return;
+    }
+    const r = stage.getBoundingClientRect(), vh = innerHeight;
+    if (r.bottom < -vh || r.top > 2 * vh) return;
+    const p = clamp((vh - r.top) / (vh + r.height), 0, 1);   // 0: its top at the bottom of the screen; 1: its bottom at the top
+    sOpen = lerp(2, gmax, ease(clamp((p - 0.12) / 0.43, 0, 1)));   // fully open by the time it reaches the middle
+    sTurn = lerp(-24, 24, ease(p));
+    if (!dragging) az.t = azBase + sTurn;
+    gap.t = sOpen;
+    B.wake();
+  }
+  const onScroll = () => { if (!sRaf) sRaf = requestAnimationFrame(fromScroll); };
+
   /** Vertical bonds between two tiers, on all four edges: the die above hides the far ones. */
   const bondsAt = (zLo, zHi) => {
     let d = "";
@@ -136,9 +159,9 @@ function mount({ stage, svg, read, layout }, value) {
   }
 
   function retarget() {
-    if (!over) { gap.t = 0.4 * gmax; pick = -1; read.textContent = "rest"; }
+    if (!over) { gap.t = sOpen ?? 0.4 * gmax; pick = -1; read.textContent = "rest"; }
     else {
-      gap.t = lerp(2, gmax, clamp((over[0] - 70) / 250, 0, 1));
+      gap.t = sOpen ?? lerp(2, gmax, clamp((over[0] - 70) / 250, 0, 1));   // on phones the scroll sets the gap
       pick = choose(over[1]);
       read.textContent = NAMES[pick];
     }
@@ -153,6 +176,7 @@ function mount({ stage, svg, read, layout }, value) {
     dragging = false;
     if (performance.now() - lastT > 100) vel = 0;   // held still before letting go: no fling, just settle
     az.v = clamp(vel, -720, 720); az.t = detent(az.x + az.v * 0.22);
+    azBase = az.t - (sOpen !== null ? sTurn : 0);   // later scrolling turns on from where the drag settled
     B.wake();
   }
   function move(p, e) {
@@ -178,6 +202,11 @@ function mount({ stage, svg, read, layout }, value) {
   bag.on(stage, "pointerup", release);
   bag.on(stage, "pointercancel", release);
   bag.add(() => svg.replaceChildren());
+  bag.on(window, "scroll", onScroll, { passive: true });
+  bag.on(window, "resize", onScroll, { passive: true });
+  phone.addEventListener("change", onScroll); bag.add(() => phone.removeEventListener("change", onScroll));
+  bag.add(() => cancelAnimationFrame(sRaf));
+  fromScroll();
 
   return {
     set: (v) => { gmax = v; retarget(); },
@@ -187,7 +216,7 @@ function mount({ stage, svg, read, layout }, value) {
 
 hairline({
   name: "stack",
-  means: "A 3D chip on its package: drag to turn it, move across to open the stack, up or down to pick a die.",
+  means: "A 3D chip on its package: drag to turn it, move across to open the stack, up or down to pick a die. On phones, scrolling opens and turns it.",
   gap: 32,   // how far the stack opens at rest
   mount,
 });
