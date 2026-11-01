@@ -678,6 +678,9 @@ a.li-v::after{content:"↗";color:var(--paper-3);transition:color .2s,transform 
 /* soft spill outside the rim (behind the opaque body, so the label stays clean) */
 .spec-btn::after{content:"";z-index:-1;inset:-1px;filter:blur(9px);opacity:calc(var(--sp-glow) * var(--sp-i) * .75)}
 @media (prefers-contrast:more){.spec-btn::after,.spec-btn::before{display:none}}
+/* on hover the glass gives way to the flat brand red (Brand Identity flare #D65148), so the white light never tints it pink */
+.spec-btn .sp-rim,.spec-btn::before,.spec-btn::after{transition:opacity .25s}
+.spec-btn:hover .sp-rim,.spec-btn:hover::before,.spec-btn:hover::after{opacity:0}
 
 /* ---------- mobile menu: staggered panel (vanilla port of React Bits StaggeredMenu) ----------
    two colour layers sweep in from the right, then the panel; labels rise in one by one with their numbers;
