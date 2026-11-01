@@ -854,6 +854,7 @@ main{position:relative;z-index:1;background:var(--ink);display:flow-root}
   .stage-pin{transform:none;animation:stack linear both;animation-timeline:--nx;animation-range:cover 0px cover calc(100svh - 64px)}
   .stage::after{opacity:0;animation:dim linear both;animation-timeline:--nx;animation-range:cover 0px cover calc(100svh - 64px)}
 }
+.stage-pin.rs,.stage-pin.rs .stage::after{animation:none}   /* restart switch, see "hero scroll stack" in the script */
 @keyframes stack{from{transform:none}to{transform:translateY(calc((100svh - 64px) * .72)) scale(.9)}}
 @keyframes dim{from{opacity:0}to{opacity:.28}}
 .bnext{z-index:1}
@@ -1430,6 +1431,8 @@ main{position:relative;z-index:1;background:var(--ink);display:flow-root}
   addEventListener('keydown', e => { if(e.key === 'Escape') closeMenu(); });
   menu.addEventListener('click', e => { if(e.target.closest('a')) closeMenu(); });
   document.addEventListener('archgen:booking-open', closeMenu);   // Contact opens the booking dialog (booking.js takes the click first): close the menu under it
+  // closing that dialog returns focus to the link that opened it; when that link sat in the (now closed) menu, land on the menu button instead
+  document.addEventListener('close', e => { if(e.target.classList && e.target.classList.contains('booking-dialog')) setTimeout(() => { if(document.activeElement === document.body) burger.focus({preventScroll: true}); }); }, true);
 
   /* ---------------- specular button: the rim light follows the cursor ---------------- */
   defer(function(){
@@ -1767,7 +1770,14 @@ void main(){
     const hero = document.querySelector('.stage-pin'), next = document.querySelector('.bnext');
     if(!hero || !next || reduce) return;
     // the CSS view timeline drives it on the compositor where supported; this is the fallback for older browsers
-    if(window.CSS && CSS.supports('animation-timeline: view()') && CSS.supports('timeline-scope: none')) return;
+    if(window.CSS && CSS.supports('animation-timeline: view()') && CSS.supports('timeline-scope: none')){
+      // after a page-wide scroll lock (the loading screen, the booking dialog) some mobile browsers leave the timeline at
+      // its end, the card pushed down out of the hero: restart the animation so it picks up the scroll again
+      const restart = () => { hero.classList.add('rs'); void hero.offsetWidth; hero.classList.remove('rs'); };
+      document.body.addEventListener('archgen:loaded', restart);
+      document.addEventListener('close', e => { if(e.target.classList && e.target.classList.contains('booking-dialog')) restart(); }, true);
+      return;
+    }
     const HEADER = 64;
     function update(){
       if(current !== 'home') return;
