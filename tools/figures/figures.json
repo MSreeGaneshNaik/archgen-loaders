@@ -1,0 +1,42 @@
+[
+  {
+    "slug": "how-we-ranked-first-in-the-partcl",
+    "fig": "Fig 1",
+    "title": "Macro placement",
+    "label": "A pick-and-place gantry over a chip die. Eight hard macros start in two stacks on a staging plate, overlapping each other. The gantry lifts each one and sets it on the die where it overlaps nothing; a dial gauge settles at the verified average proxy cost of 0.9507 when the last macro lands.",
+    "keys": [
+      { "mark": "body", "label": "Hard macros: start stacked, end legal" },
+      { "mark": "red", "label": "The move being made" }
+    ]
+  },
+  {
+    "slug": "why-chip-design-takes-18-months",
+    "fig": "Fig 2",
+    "title": "The iteration loop",
+    "label": "An indexing turntable carries a die through five stations: Floorplan, Place, CTS, Route and Timing check. When the timing check fails its lamp lights and the die is carried all the way round to Floorplan again, while a tally counter on the front counts each loop.",
+    "keys": [
+      { "mark": "body", "label": "Five stations of the physical design flow" },
+      { "mark": "red", "label": "Timing check failed: round again" }
+    ]
+  },
+  {
+    "slug": "cognitive-agents-next-era-silicon",
+    "fig": "Fig 3",
+    "title": "PD orchestrator",
+    "label": "An orchestrator column with one swinging arm visits three sub-agents in turn: a planning desk, a runtime press that runs the flow on a die, and an analyzer gauge that reads the worst timing slack. After each run it files a card in a memory cabinet. The slack improves run by run until timing is met.",
+    "keys": [
+      { "mark": "body", "label": "Sub-agents: plan, run, analyze, and the memory cabinet" },
+      { "mark": "red", "label": "The agent working now" }
+    ]
+  },
+  {
+    "slug": "disrupting-semiconductor-ai-agents",
+    "fig": "Fig 4",
+    "title": "ChipOS line",
+    "label": "ChipOS as a production line: a conveyor carries a die blank under five agent stations, Spec, RTL, Synthesis, Layout and GDSII. Each station dips its tool and leaves its work on the die, and the finished die drops into the out tray at the end.",
+    "keys": [
+      { "mark": "body", "label": "Agent stations, Spec to GDSII" },
+      { "mark": "red", "label": "The agent at work" }
+    ]
+  }
+]

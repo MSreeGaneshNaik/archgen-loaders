@@ -1,0 +1,30 @@
+# Archgen Labs
+
+> Archgen Labs (also written Archgen) is building an AI agent for chip physical design, from a single die to a 3D stack. Picture a coding agent, except the codebase is a chip. The company is backed by Y Combinator.
+
+## What the agent does
+- Works in physical design, inside the EDA flow a team already runs; nothing is ripped out or replaced.
+- Reads the run evidence: timing reports, DRC results, congestion maps and run logs.
+- Finds the root cause, patches the flow files (for example floorplan.tcl and constraints.sdc) and reruns timing, DRC and congestion.
+- Keeps every fix in memory and applies what worked on one block to the next.
+- Built for 2D and 3D-stacked chips. Stacked dies share timing, power and heat across tiers, while most physical design tools still treat each die as a separate flat chip.
+
+## Proof
+- Ranked #1 on the IBM macro-placement benchmarks in the HRT × Partcl macro placement challenge: https://archgen.tech/blog/posts/how-we-ranked-first-in-the-partcl.html
+
+## Writing
+- Rank #1 on the IBM macro-placement benchmarks (Jun 20, 2026): https://archgen.tech/blog/posts/how-we-ranked-first-in-the-partcl.html
+- 18 months per chip. Where does the time go? (Apr 6, 2026): https://archgen.tech/blog/posts/why-chip-design-takes-18-months.html
+- Context, feedback, memory: cognitive agents for the next era of silicon (Feb 20, 2026): https://archgen.tech/blog/posts/cognitive-agents-next-era-silicon.html
+- Less magic. More context: on disrupting the semiconductor industry with AI agents (Dec 17, 2025): https://archgen.tech/blog/posts/disrupting-semiconductor-ai-agents.html
+
+## People
+- Hariharan Ayappane, founder: hari@archgen.tech, https://www.linkedin.com/in/hariharan-ayappane/
+- Naveen Venkat, founder: naveen@archgen.tech, https://www.linkedin.com/in/naveenvenkat17/
+
+## Links
+- Website: https://archgen.tech/
+- X: https://x.com/archgen_
+- GitHub: https://github.com/archgen-ai
+- LinkedIn: https://www.linkedin.com/company/archgen-ai
+- Early access: write to hari@archgen.tech

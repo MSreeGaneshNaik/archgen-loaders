@@ -1,0 +1,8 @@
+html.booking-open { overflow: hidden; }
+.booking-dialog { box-sizing: border-box; width: min(960px, calc(100vw - 24px)); max-width: none; height: min(800px, calc(100dvh - 24px)); max-height: none; padding: 0; border: 1px solid #b8c7d0; border-radius: 16px; background: #fff; color: #0e1317; box-shadow: 0 24px 90px #0005; }
+.booking-dialog::backdrop { background: #0e1317a6; }
+.booking-toolbar { min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 16px; box-sizing: border-box; background: #e8edf1; font: 12px/1.4 monospace; }
+.booking-toolbar a { color: inherit; }
+.booking-toolbar button { min-height: 44px; padding: 8px 12px; border: 0; border-radius: 8px; background: #0e1317; color: #fff; cursor: pointer; }
+.booking-toolbar :focus-visible { outline: 2px solid #a8392f; outline-offset: 3px; }
+.booking-dialog iframe { display: block; width: 100%; height: calc(100% - 56px); border: 0; background: #fff; }

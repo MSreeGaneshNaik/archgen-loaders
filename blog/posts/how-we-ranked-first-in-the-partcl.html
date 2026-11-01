@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>/* every page opens at its top: no restored scroll position, so nothing slides or lands mid-page on open or reload */if("scrollRestoration" in history)history.scrollRestoration="manual";</script>
+<meta charset="utf-8">
+<!-- fonts:head -->
+<script>/* opened from disk: fonts can't be fetched on file://, so they come from a script instead (never loaded over http) */
+if(location.protocol==="file:")document.write('<script src="'+(/\/blog\/posts\//.test(location.pathname)?"../../":"")+'assets/fonts/local-fonts.js"><\/script>')</script>
+<!-- /fonts:head -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How We Ranked First in the HRT (Hudson River Trading) and Partcl Macro Placement Challenge | Archgen Labs</title>
+<meta name="description" content="A technical write-up of the approach behind our verified rank-1 score on the IBM macro-placement benchmarks.">
+<link rel="canonical" href="https://archgen.tech/blog/posts/how-we-ranked-first-in-the-partcl.html">
+<meta name="author" content="Naveen Venkat &amp; Hariharan Ayappane">
+<meta name="theme-color" content="#E8EDF1">
+<link rel="icon" type="image/svg+xml" href="../../assets/logo/archgen-ai-favicon-red.svg">
+<link rel="apple-touch-icon" href="../../assets/logo/apple-touch-icon.png">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Archgen Labs">
+<meta property="og:url" content="https://archgen.tech/blog/posts/how-we-ranked-first-in-the-partcl.html">
+<meta property="og:title" content="How We Ranked First in the HRT (Hudson River Trading) and Partcl Macro Placement Challenge">
+<meta property="og:description" content="A technical write-up of the approach behind our verified rank-1 score on the IBM macro-placement benchmarks.">
+<meta property="og:image" content="https://archgen.tech/assets/social/og-1200x630.png">
+<meta property="article:published_time" content="2026-06-20">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@archgen_">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "How We Ranked First in the HRT (Hudson River Trading) and Partcl Macro Placement Challenge", "description": "A technical write-up of the approach behind our verified rank-1 score on the IBM macro-placement benchmarks.", "datePublished": "2026-06-20", "url": "https://archgen.tech/blog/posts/how-we-ranked-first-in-the-partcl.html", "mainEntityOfPage": "https://archgen.tech/blog/posts/how-we-ranked-first-in-the-partcl.html", "author": [{"@type": "Person", "name": "Naveen Venkat"}, {"@type": "Person", "name": "Hariharan Ayappane"}], "publisher": {"@type": "Organization", "name": "Archgen Labs", "url": "https://archgen.tech/", "logo": {"@type": "ImageObject", "url": "https://archgen.tech/assets/logo/archgen-ai-icon-512.png"}}, "image": "https://archgen.tech/assets/social/og-1200x630.png"}</script>
+<link rel="preload" as="font" type="font/woff2" href="../../assets/fonts/cascadia-code-latin.woff2" crossorigin>
+<link rel="stylesheet" href="../post.css">
+<style>.ag-fig,.fig{margin:0}.fig-plate{position:relative;aspect-ratio:16/11;border-radius:14px;background:#f7fafb;box-shadow:0 0 0 1px #738a9a;overflow:hidden;outline:none;isolation:isolate}.fig-plate:focus-visible{box-shadow:0 0 0 1px #738a9a,0 0 0 3px #d65148}.fig-poster,.fig-poster img,.ag3d-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}.fig-poster img{object-fit:cover}.ag3d-canvas{opacity:0;transition:opacity .35s cubic-bezier(.2,.9,.3,1);cursor:grab;touch-action:pan-y}.ag3d-canvas:active{cursor:grabbing}.is-3d .ag3d-canvas{opacity:1}.is-live .fig-poster{visibility:hidden}.fig-corner{position:absolute;z-index:1;pointer-events:none;color:#0e131799;font:10.5px/1 Cascadia Code,ui-monospace,Consolas,monospace;letter-spacing:.04em;white-space:nowrap}.fig-corner[data-corner=fig]{top:18px;left:20px;color:#0e1317bd}.fig-corner[data-corner=title]{top:18px;right:20px;text-transform:uppercase;letter-spacing:.1em}.fig-corner[data-corner=hint]{bottom:18px;left:20px;text-transform:uppercase;letter-spacing:.1em}.fig-corner[data-corner=readout]{bottom:18px;right:20px;color:#0e1317bd;font-variant-numeric:tabular-nums}.fig-keys{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font:13px/1.55 Cascadia Code,ui-monospace,Consolas,monospace;color:#0e1317bd}.fig-key{display:inline-flex;align-items:center;gap:8px}.fig-key:before{content:"";flex:none;width:8px;height:8px;border:1.5px solid #435565;border-radius:1.5px;transform:rotate(45deg) skew(-12deg,-12deg)}.fig-key[data-mark=red]:before{border-color:#d65148;background:#d6514824}@media (max-width:560px){.fig-plate{aspect-ratio:10/9}.fig-corner[data-corner=fig],.fig-corner[data-corner=title]{top:14px}.fig-corner[data-corner=fig],.fig-corner[data-corner=hint]{left:14px}.fig-corner[data-corner=title],.fig-corner[data-corner=readout]{right:14px}.fig-corner[data-corner=hint]{bottom:32px}.fig-corner[data-corner=readout]{bottom:14px}}
+</style>
+<link rel="stylesheet" href="../../assets/css/booking.css">
+<script src="../../assets/js/analytics.js" defer></script>
+<script src="../../assets/js/booking.js" defer></script>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap bar-in">
+    <a class="brand" href="../../index.html#home"><span class="sr-only">Archgen Labs, home. </span><svg class="lockup" viewBox="-53 -97 2172 330" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M-0 155.3C-0 155 2.8 149.5 6.1 143.1C9.5 136.7 20.5 116 30.5 97C40.5 78 53.4 53.7 59.1 43C64.7 32.3 72.1 18.3 75.5 12L81.6 0.5L94.5 0.2L107.5 -0L119 21.7C151.5 83.2 160.8 100.9 174.3 127.3L189 156L175.3 156L161.5 155.9L151.4 136.7L141.3 117.5L94.4 117.2L47.4 117L37.1 136.5L26.8 156L13.4 156C6 156 -0 155.7 -0 155.3ZM216 112L216 68L271.8 68L327.6 68L329.8 66.4C334.1 63.4 335 60 335 46C335 31.1 334.1 28.2 328.6 25.6L325.2 24L270.6 24L216 24L216 12L216 -0.1L276.2 0.2L336.5 0.5L342.2 3.3C349.1 6.7 356.2 14.2 358.5 20.8C360.7 26.8 361.8 55.5 360.1 64.4C357.1 80.6 346.4 90.7 330.9 91.8C327.1 92 324 92.4 324 92.6C324 93 347.8 129.3 358.1 144.7C361.9 150.3 365 155.2 365 155.5C365 155.8 358.7 156 351 156L337 156L315.8 124L294.5 92L268.3 92L242 92L241.8 123.8L241.5 155.5L228.8 155.8L216 156.1L216 112ZM420.5 154.6C411.2 151.6 404.8 146.3 400.1 137.5L397.5 132.5L397.2 79.6L396.9 26.7L398.5 21.1L400.2 15.5L406 9.8L411.8 4.2L418.5 2.1L425.2 0L479.6 0L534 0L534 12L534 23.9L481 24.2L428 24.5L425.3 27.3L422.5 30L422.2 76L421.9 121.9L423.4 125.5C424.5 128 426 129.5 428.4 130.5L431.9 132L484 132L536 132L536 144L536 156L480.2 155.9C438.2 155.9 423.5 155.6 420.5 154.6ZM571 78L571 -0.1L583.6 0.2L596.1 0.5L596 31.8L595.9 63L609.7 63.2C647.6 63.6 678.5 63.6 687.8 63.2L698 62.7L698 31.3L698 0L711 0L724 0L724 78L724 156L711 156L698 156L698 121.7L698 87.3L647.5 87.4L596.9 87.4L596.4 89.5C596.1 90.7 596 93.2 596.1 95.1C596.2 97 596.3 111.4 596.2 127.2L596 156L583.5 156L571 156L571 78ZM785 155.1C775.2 152 766.7 144.9 762.7 136.2L760.5 131.5L760.5 77.5L760.5 23.5L762.6 19C765.8 12.2 771.4 6.4 777.8 3.3L783.5 0.5L845.2 0.2L907 -0.1L907 12L907 24L850.9 24L794.8 24L791.5 25.5C789.8 26.4 787.8 28.1 787.1 29.3C786.3 30.8 785.9 44.9 785.6 77L785.3 122.5L786.8 125.8C787.6 127.6 789.2 129.6 790.4 130.3C791.9 131.2 803.5 131.6 833.5 131.7C856 131.9 875.9 131.8 877.6 131.5C879.4 131.2 882 129.8 883.4 128.3L886 125.7L886 106.9L886 88L858 88L830 88L830 76.1L830 64.2L863.8 63.8C882.3 63.6 900.8 63.7 904.8 63.8L912.1 64.2L911.8 97.8L911.5 131.5L909.3 136.2C906.3 142.8 899.7 149.5 893.1 152.7L887.5 155.5L837.5 155.7C810 155.8 786.4 155.5 785 155.1ZM948.7 155.2C947.9 154 947.8 7.4 948.6 3.6L949.2 0L1018.6 0L1088 0L1088 12L1088 24L1031.2 24.2L974.5 24.5L974.2 43.8L974 63L1023 63L1072 63L1072 75L1072 87L1023 87L974 87L974 109L974 131L976.2 131.2C978.9 131.5 979.8 131.5 1040.8 131.8L1088 132L1088 144L1088 156L1018.6 156C980.4 156 948.9 155.7 948.7 155.2ZM1123 78L1123 0L1136.5 -0C1146.9 -0 1150.1 0.3 1150.7 1.4C1151.1 2.2 1155 6.8 1159.2 11.6C1168.9 22.9 1195.7 54.4 1207.7 68.6C1222.8 86.6 1241 108.2 1245.7 113.5L1250 118.5L1250 59.2L1250 0L1262.5 0L1275 0L1275 78L1275 156L1262.2 155.9L1249.5 155.9L1243.5 148.8C1240.2 144.9 1232 135.1 1225.2 127.1C1218.4 119.1 1209.8 108.9 1206.2 104.6C1192.7 88.6 1174.5 67.1 1162.2 52.6L1149.5 37.7L1148.8 44.6C1148.4 48.4 1148.2 75 1148.4 103.8L1148.8 156L1135.9 156L1123 156L1123 78ZM1389 78L1389 0L1402.6 -0L1416.2 -0L1415.8 64C1415.6 99.2 1415.7 128.4 1416 129C1416.4 129.6 1435 130.1 1466.6 130.2L1516.5 130.5L1516.8 143.2L1517.1 156L1453 156L1389 156L1389 78ZM1537 155.6C1537 155.4 1541.1 147.4 1546.1 137.9C1551.1 128.3 1558.3 114.4 1562.2 107C1566.1 99.6 1580.3 72.5 1593.8 46.8L1618.4 0L1631.1 -0L1643.8 -0L1650.8 13.2C1654.6 20.5 1661.5 33.5 1666 42C1685.7 79.1 1725 154.6 1725 155.5C1725 155.8 1719 156 1711.6 156L1698.2 156L1687.8 136.5L1677.5 117L1630.9 117L1584.4 117L1574 136.5L1563.6 156L1550.3 156C1543 156 1537 155.8 1537 155.6ZM1748 78L1748 -0.1L1807.8 0.2L1867.5 0.5L1873.1 3.3C1879.7 6.5 1886.3 13.2 1889.3 19.8L1891.5 24.5L1891.5 42.5L1891.5 60.5L1888.9 66L1886.3 71.6L1891.1 76.9C1898.4 84.7 1899.2 88.7 1898.8 112.3L1898.5 131.5L1895.6 137.3C1892 144.3 1886.7 149.3 1879.1 152.9L1873.5 155.5L1810.8 155.8L1748 156.1L1748 78ZM1931 143.6L1931 131.3L1934.8 130.6C1936.8 130.3 1959.7 130 1985.5 130L2032.6 130L2034.9 128.4C2038.8 125.6 2040 121.1 2040 109C2040 97.6 2039.1 94 2035.4 90.9L2033.7 89.5L1994.1 89L1954.5 88.4L1948.9 86.2C1941 83 1935.7 78.1 1931.8 70.2L1928.5 63.6L1928.2 46.5C1927.9 36.2 1928.3 27.5 1928.9 24.5C1931.4 13.7 1940.1 4.6 1951.1 1.6L1956.6 -0L2006.8 -0L2057 0L2057 4.8C2057 7.5 2056.7 13.1 2056.4 17.3L2055.7 25L2009.3 25L1962.9 25L1960 26.5C1958.4 27.3 1956.6 28.9 1956 29.9C1955.5 31 1955 37.6 1955 44.5L1955 57.2L1957.8 60L1960.7 62.8L2000.6 63.2L2040.5 63.5L2046.1 66.1C2053.4 69.5 2058.9 74.6 2062.6 81.2L2065.5 86.5L2065.5 109L2065.5 131.5L2063.1 136.8C2059.6 144.4 2051.6 151.4 2043.3 154L2036.8 156L1983.9 156L1931 156L1931 143.6ZM1868 128.2C1872.3 125 1873 122.3 1873 109.2C1873 95.5 1872 92.1 1867.1 89.5L1864.2 88L1828.8 88C1809.4 88 1788.9 88 1783.2 88L1773 88L1773 108.9L1773 129.9L1774.7 130.2C1775.6 130.4 1796.4 130.4 1820.9 130.3L1865.5 130L1868 128.2ZM128.7 92.2C128.4 91.8 120.9 77.6 112 60.5C103.1 43.4 95.5 29.2 95.1 28.7C94.4 28 88 39.6 69.7 74.8L60.2 93L94.7 93C113.6 93 128.9 92.7 128.7 92.2ZM1665 92.5C1665 92.1 1647.9 59 1636.6 37.8C1633.8 32.4 1631.3 28 1631 28C1630.4 28 1625.7 36.9 1608.6 70.2L1596.9 93L1630.9 93C1649.7 93 1665 92.8 1665 92.5ZM1862.1 60.1L1865 57.2L1865 44.6L1865 32L1862.1 28.8L1859.2 25.5L1816.3 25.5L1773.5 25.5L1773.2 44.2L1773 63L1816.1 63L1859.2 63L1862.1 60.1Z"/></svg></a>
+    <nav class="nav" aria-label="Primary"><a href="../../index.html#blog" aria-current="page">Blog</a></nav>
+    <a class="pill" href="../../index.html#contact">Contact <span aria-hidden="true">→</span></a>
+  </div>
+  <div class="progress" aria-hidden="true"></div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+    <div class="post">
+      <header class="post-head">
+        <a class="back" href="../../index.html#blog"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"/></svg>All posts</a>
+        <p class="tag">Benchmark</p>
+        <h1>How We Ranked First in the HRT (Hudson River Trading) and Partcl Macro Placement Challenge</h1>
+        <p class="meta"><time datetime="2026-06-20">Jun 20, 2026</time><span>9 min read</span><span>Naveen Venkat &amp; Hariharan Ayappane</span></p>
+        <div class="post-fig"><div class="ag-fig" id="fig-how-we-ranked-first-in-the-partcl"><figure class="fig"><div class="fig-plate" tabindex="0" role="img" aria-label="A pick-and-place gantry over a chip die. Eight hard macros start in two stacks on a staging plate, overlapping each other. The gantry lifts each one and sets it on the die where it overlaps nothing; a dial gauge settles at the verified average proxy cost of 0.9507 when the last macro lands."><picture class="fig-poster"><source media="(max-width:560px)" srcset="../../assets/figures/how-we-ranked-first-in-the-partcl-narrow.webp" width="716" height="644"><img src="../../assets/figures/how-we-ranked-first-in-the-partcl-wide.webp" alt="" width="1276" height="876" decoding="async"></picture><span class="fig-corner" data-corner="fig">Fig 1</span><span class="fig-corner" data-corner="title">Macro placement</span><span class="fig-corner" data-corner="hint"></span><span class="fig-corner" data-corner="readout" data-readout>placed 0 of 8 · overlaps 6</span></div><figcaption class="fig-keys"><span class="fig-key" data-mark="body">Hard macros: start stacked, end legal</span><span class="fig-key" data-mark="red">The move being made</span></figcaption></figure></div></div>
+      </header>
+      <nav class="toc" aria-label="On this page"><h2>On this page</h2><ol></ol></nav>
+      <article class="prose">
+<p class="dek">A technical write-up of the approach behind our verified rank-1 score on the IBM macro-placement benchmarks.</p>
+<p>HRT (Hudson River Trading) and Partcl (backed by Khosla Ventures) ran the Macro Placement Challenge to evaluate macro placement systems on the IBM benchmark suite. The objective was to generate legal placements with the lowest average proxy cost across the designs, with zero hard-macro overlaps and a fixed runtime budget.</p>
+<p>Our submission ranked first on the verified leaderboard with an average proxy cost of 0.9507 and zero hard-macro overlaps. This article documents how we started, what we tried, and how the final approach evolved.</p>
+<p>Official contest repository: <a href="https://github.com/partcleda/macro-place-challenge-2026" target="_blank" rel="noopener">partcleda/macro-place-challenge-2026</a>.</p>
+<figure class="sz" style="--iw:1007px;--ar:1.9365"><picture><source type="image/webp" srcset="../../assets/blog/partcl-eaa8b3bf-1007x520.webp"><img src="../../assets/blog/partcl-eaa8b3bf-1007x520.png" width="1007" height="520" alt="HRT and Partcl macro placement challenge leaderboard context" width="1007" height="520" loading="lazy" decoding="async"></picture></figure>
+<p>That contest structure shaped the whole project.</p>
+<h2 class="v2">The Problem</h2>
+<p>Macro placement is the part of physical design where large blocks, such as memories and IP macros, are assigned locations on the chip canvas. The placement must satisfy hard geometric constraints, but geometry alone is not enough. A floorplan can look clean to a human eye and still fail later when detailed routing spends hours exposing narrow channels, local overflow, and insufficient routing capacity.</p>
+<p>The challenge compressed that downstream pain into a faster public proxy:</p>
+<pre><code>proxy = wirelength + 0.5 * density + 0.5 * congestion</code></pre>
+<p>Lower is better.</p>
+<p>For the exact scorer definitions, see the challenge <a href="https://github.com/partcleda/macro-place-challenge-2026/blob/main/SETUP.md#computing-proxy-cost" target="_blank" rel="noopener">SETUP.md</a> and the <a href="https://github.com/TILOS-AI-Institute/MacroPlacement/tree/main/Docs/ProxyCost" target="_blank" rel="noopener">TILOS MacroPlacement proxy-cost documentation</a>, which describe normalized HPWL, top-10% grid density, and top-5% routing congestion with smoothing.</p>
+<p>The benchmarks gave us hard macros, soft macros, a canvas, and a netlist. Hard macros had to stay inside the canvas and could not overlap. The solution also had to run under the contest time limit for every benchmark.</p>
+<p>At the start, it was tempting to think of the objective as a balanced wirelength, density, and congestion problem. The component tables quickly corrected that assumption.</p>
+<p>In strong late-stage runs, wirelength was already around 0.07 to 0.08. Congestion was still large. One representative decomposition looked like this:</p>
+<figure class="sz" style="--iw:1428px;--ar:3.9557"><picture><source type="image/webp" srcset="../../assets/blog/partcl-7e424bd2-1428x361.webp"><img src="../../assets/blog/partcl-7e424bd2-1428x361.png" width="1428" height="361" alt="Proxy-cost component decomposition showing congestion as the main remaining term" width="1428" height="361" loading="lazy" decoding="async"></picture></figure>
+<p>That is the point where the optimization target changed. We still had to protect HPWL, but the score was moving through density and congestion.</p>
+<h2 class="v2">Evolution of the Approach</h2>
+<p>With the objective and component bias clear, the implementation evolved through the following phases.</p>
+<h2 class="v2">Phase 1: Baseline Macro Placement</h2>
+<p>Our first approach was straightforward: run a basic macroplacer, legalize hard macros, evaluate the proxy, and compare against the suite. It gave us valid placements and early full-suite averages in the rough 1.4 to 1.5 range.</p>
+<p>That baseline was useful because it made the problem measurable. We were not mainly failing because the placer could not make legal floorplans. We were failing because the legal floorplans still concentrated too much routing and density pressure.</p>
+<p>The first reliable improvements came from exact-scored repair:</p>
+<ul><li><p>keep a legal hard-macro placement,</p></li>
+<li><p>make candidate moves,</p></li>
+<li><p>reject hard-macro overlaps,</p></li>
+<li><p>score the candidate with the same proxy components,</p></li>
+<li><p>accept only if the measured proxy improved,</p></li>
+<li><p>validate on all designs, not just one benchmark.</p></li></ul>
+<p>This moved the system into the low 1.2 range. More importantly, it established the rule that survived to the end: no candidate mattered until it passed legality, exact scoring, runtime, and full-suite checks.</p>
+<h2 class="v2">Phase 2: Auto-Research Harness</h2>
+<p>Inspired by Andrej Karpathy's framing of auto-research, we wrapped the placer in a simple experiment loop: propose a change, run the suite, parse the metrics, and promote only if the full result improved.</p>
+<p>The harness tracked proxy, wirelength, density, congestion, overlap count, and runtime for every candidate. Invalid runs, timeouts, and partial-suite wins were rejected.</p>
+<pre><code>propose candidate
+run benchmark evaluations
+collect proxy components
+reject invalid or timeout cases
+compare against current baseline
+promote only full-suite improvements</code></pre>
+<figure class="sz" style="--iw:1456px;--ar:1.8836"><img src="../../assets/blog/partcl-c1980ffc-1761x935.png" width="1456" height="773" alt="" width="1456" height="773" loading="lazy" decoding="async"></figure>
+<p>The graph is from the early auto-research phase. It shows the main point: progress came from repeated full-suite measurements, not from judging placements visually.</p>
+<h2 class="v2">Phase 3: Fast Runtime Proxy Evaluation</h2>
+<p>We could not call the public scorer after every possible move, so we built an incremental proxy evaluator for local repair. For each trial macro move, it updated only the affected state:</p>
+<ul><li><p>HPWL for nets touched by the moved macro,</p></li><li><p>density for grid cells whose overlap area changed,</p></li><li><p>congestion from routing-demand and macro-blockage caches,</p></li><li><p>hard-macro overlap checks before acceptance,</p></li><li><p>undo state so rejected moves restored the previous proxy state.</p></li></ul>
+<p>A move was kept only if the measured proxy improved. The subtle part was numerical compatibility. A placement that looked legal in float64 local geometry could still become an overlap after the official float32 scorer rounded positions. We moved legality and grid calculations toward scorer-compatible float32 behavior and added explicit clearance gaps, so “zero overlaps” locally matched zero overlaps in final scoring.</p>
+<h2 class="v2">Phase 4: Multi-Start Search</h2>
+<p>The naive multi-start version was simple: generate starts, run repair, pick the best. That helped, but blind restarts waste the one-hour benchmark budget.</p>
+<p>The useful version was multi-seam search. We generated physically different starting basins, legalized them, prescored proxy and congestion, and sent only the best few into long repair.</p>
+<p>The seed portfolio included:</p>
+<ul><li><p>the original legal warm start,</p></li><li><p>an analytical seed driven by net connectivity, density pressure, and routing-aware weights,</p></li><li><p>blend seeds between the original placement and the analytical placement,</p></li><li><p>expansion seeds that pushed movable macros away from the placement centroid,</p></li><li><p>synthetic-clearance seeds,</p></li><li><p>gradient-descent and Nesterov-style continuous basins,</p></li><li><p>route-channel and gap-fill basins tested during plateau work,</p></li><li><p>Xplace-RA route-aware variants with different safety margins,</p></li><li><p>and fallback exact-repair candidates when route-aware candidates failed gates.</p></li></ul>
+<p>One seed-attribution experiment made this concrete. It ran 17 / 17 public IBM designs with 10 workers and evaluated 12 seed algorithms: raw legalized starts, analytical starts, blend starts, expansion starts, route-channel starts, and a few exploratory heuristic starts.</p>
+<p>The winners were not evenly distributed:</p>
+<figure class="sz" style="--iw:1456px;--ar:3.4749"><picture><source type="image/webp" srcset="../../assets/blog/partcl-52cc2ca8-1508x434.webp"><img src="../../assets/blog/partcl-52cc2ca8-1508x434.png" width="1456" height="419" alt="" width="1456" height="419" loading="lazy" decoding="async"></picture></figure>
+<p><br>That result was useful because it removed guesswork. Expansion, raw legalized, and route-channel basins were worth keeping. The exploratory heuristic seeds did not beat those seed classes. The traced phases also showed that exact congestion refinement was the best final traced stage for every design in that experiment.</p>
+<p>The important step was prescoring. A seed was not allowed to consume the full budget just because it looked interesting. The harness legalized it, computed proxy components, ranked by proxy and congestion, then polished only a small queue.</p>
+<p>The pattern looked like this:</p>
+<pre><code>generate seed basins
+legalize hard macros
+prescore proxy and congestion
+keep the best few legal seeds
+spend repair time on the winners
+fall back if a candidate source fails</code></pre>
+<p>That made multi-start a seed-selection problem rather than a random-restart problem.</p>
+<h2 class="v2">Phase 5: Synthetic Clearance</h2>
+<p>One of the most important seed-generation approaches came from a simple physical observation: the baseline was too packed in the wrong places.</p>
+<p>We started adding synthetic clearance to smaller macros before legal repair. The useful configuration selected movable macros up to the 97th percentile by area, added artificial separation, and used a vectorized Jacobi-style push-apart step before hard-macro legalization.</p>
+<p>Key settings in the final clearance approach were:</p>
+<figure class="sz" style="--iw:1456px;--ar:3.0979"><img src="../../assets/blog/partcl-a709fba5-1798x581.png" width="1456" height="470" alt="" width="1456" height="470" loading="lazy" decoding="async"></figure>
+<p>The point was not to change official macro sizes. The point was to create routing slack before exact repair. The legalizer then repaired hard-hard conflicts using pairwise push-apart, conflict-component handling, spiral search, emergency clearing, and displacement reduction.</p>
+<p>Synthetic clearance worked when it created better candidate basins. It failed when it pushed connected objects too far apart. That is why it stayed behind exact proxy acceptance.</p>
+<h2 class="v2">Phase 6: Soft-Macro Repair</h2>
+<p>Early versions treated soft macros mostly as cleanup. That was not enough.</p>
+<p>Soft macros can move without reopening the hard-macro legality problem. That made them useful late-stage actuators for density and congestion. A hard macro move can destroy a channel or create a hard overlap. A soft-macro move can relieve routing pressure with much lower geometric risk.</p>
+<p>The strongest version was interleaved coordinate descent:</p>
+<ul><li><p>hard and soft macros shared one evaluator state,</p></li><li><p>hard moves were rejected if hard-hard legality failed,</p></li><li><p>soft moves were allowed more freedom,</p></li><li><p>both classes were accepted only on exact proxy improvement,</p></li><li><p>large steps used quick first-improvement,</p></li><li><p>smaller steps searched multiple directions and kept the best,</p></li><li><p>and the run spent most of the benchmark budget on this measured repair.</p></li></ul>
+<p>The practical settings reflected that priority:</p>
+<figure class="sz" style="--iw:1456px;--ar:2.7472"><img src="../../assets/blog/partcl-d7d3ec73-1798x655.png" width="1456" height="530" alt="" width="1456" height="530" loading="lazy" decoding="async"></figure>
+<p>At this point, the flow had the pieces needed for measured repair: seed selection, exact local repair, soft-macro congestion control, and runtime allocation.</p>
+<figure class="sz" style="--iw:960px;--ar:1.7143"><picture><source type="image/webp" srcset="../../assets/blog/partcl-fd46b7f6-960x560.webp"><img src="../../assets/blog/partcl-fd46b7f6-960x560.gif" width="960" height="560" alt="" width="960" height="560" loading="lazy" decoding="async"></picture></figure>
+<h2 class="v2">Phase 7: Congestion-Weighted Search</h2>
+<p>The official proxy was fixed:</p>
+<pre><code>wirelength + 0.5 * density + 0.5 * congestion</code></pre>
+<p>But the internal search objective did not have to rank candidate proposals with the same naive balance at every stage. Once we saw congestion dominating the remaining score, we tested congestion-weighted repair. In the late congestion-weighted repair line, a promoted setting used:</p>
+<pre><code>WL + density + 2.5 * congestion</code></pre>
+<p>That did not replace final evaluation. It changed proposal pressure. A candidate still had to survive the real proxy gates before it mattered.</p>
+<p>This distinction was important. The internal objective could bias the search toward opening routing capacity. The official proxy still decided whether the placement improved.</p>
+<p>The promoted congestion-weighted approach reached a full-suite average around 1.0471 with all designs valid and under the time cap. The useful change was proposal ranking, not the final scoring rule.</p>
+<h2 class="v2">Phase 8: Plateau Escape</h2>
+<p>After enough exact repair, the optimizer reached plateaus: many legal candidates were evaluated, but very few were accepted. At that point, running the same move class longer was not enough.</p>
+<p>The later GPU logs made the scale clearer:</p>
+<figure class="sz" style="--iw:1456px;--ar:3.6861"><img src="../../assets/blog/partcl-ba0dcb32-1878x509.png" width="1456" height="395" alt="" width="1456" height="395" loading="lazy" decoding="async"></figure>
+<p>Across the GPU repair logs, the system evaluated 11,674,931 candidates and accepted 229,169 moves, an accept rate of 1.96%. That telemetry drove the next step: change the proposal distribution, not the acceptance rule.</p>
+<p>The plateau escape move classes were:</p>
+<figure class="sz" style="--iw:1456px;--ar:1.8860"><img src="../../assets/blog/partcl-627fe929-1508x800.png" width="1456" height="772" alt="" width="1456" height="772" loading="lazy" decoding="async"></figure>
+<p>The evaluator stayed strict. We changed how candidates were generated, not what counted as success.</p>
+<h2 class="v2">Phase 9: GPU Acceleration</h2>
+<p>Early in the contest, we assumed GPU throughput would decide how many useful candidates we could evaluate inside one hour. Development runs used NVIDIA L4 workers; the public evaluation environment listed an NVIDIA RTX 6000 Ada 48GB with AMD EPYC 9655P CPU, 16 cores, and 100GB memory. The contest Docker base was <code>pytorch/pytorch:2.5.1-cuda12.4-cudnn9-runtime</code>.</p>
+<p>The main change was moving candidate generation and ranking out of Python loops:</p>
+<ul><li><p>overlap push-apart and tensor-heavy proposal scoring moved to PyTorch CUDA tensors,</p></li><li><p>per-design candidate sources ran in parallel where hardware allowed,</p></li><li><p>Triton kernels were tested for batched top-k candidate ranking,</p></li><li><p>the exact proxy evaluator stayed as the legality and acceptance gate.</p></li></ul>
+<p>In a congestion-heavy GPU repair setting, the proposal stage ranked 80 macros x top-160 proposals, or 12,800 candidate slots, before exact accept/reject filtering. Triton experiments batched 8,192 to 16,384 proposals per pass. The GPU work did not replace scoring; it made scoring spend time on better candidates.</p>
+<h2 class="v2">Phase 10: Xplace-RA Route-Aware Seeds</h2>
+<p>Xplace is a GPU-accelerated analytical placer from CUHK EDA. We used a patched Xplace checkout as a route-aware seed generator, not as the final scorer. This is different from XLA, or Accelerated Linear Algebra; XLA was not part of this flow.</p>
+<p>In our flow, Xplace-RA meant:</p>
+<ul><li><p>export the current benchmark through the LEF/DEF bridge,</p></li><li><p>run patched Xplace to produce route-aware seed placements,</p></li><li><p>map the result back into the challenge placement format,</p></li><li><p>gate it with overlap, density, congestion, and finite-coordinate checks,</p></li><li><p>run exact-scored repair only if the seed beat the baseline candidate.</p></li></ul>
+<p>The score progression looked like this:</p>
+<figure class="sz" style="--iw:1456px;--ar:1.4068"><img src="../../assets/blog/partcl-8aacfe87-1798x1278.png" width="1456" height="1035" alt="" width="1456" height="1035" loading="lazy" decoding="async"></figure>
+<p>The submit-ready selector was especially important because it stayed generic: 17 / 17 designs valid, 0 / 17 overlap failures, average wirelength 0.075941, density 0.519471, congestion 1.251706, and a 3300-second placement cap.</p>
+<p>The route-aware build image used <code>pytorch/pytorch:2.5.1-cuda12.4-cudnn9-devel</code>. The Docker path cloned <code>cuhk-eda/Xplace</code> into <code>/opt/Xplace</code>, copied our patch bundle on top, built it with CUDA architecture 89, and set <code>EVOXRAXPLACE_ROOT=/opt/Xplace</code>. If patched Xplace was missing or failed gates, the selector used the in-house exact-repair candidate instead.</p>
+<p>That fallback logic was part of the algorithm. A strong optional candidate source is useful only if failure does not poison the final placement.</p>
+<h2 class="v2">Phase 11: Triton Candidate Ranking</h2>
+<p>Triton was used as an experimental kernel path for candidate ranking. The goal was specific: batch many proposals, rank them on GPU, and feed only promising candidates into the exact evaluator.</p>
+<p>The first modes did not beat the baseline, so Triton stayed gated:</p>
+<ul><li><p>keep baseline direction candidates,</p></li><li><p>union Triton-ranked candidates with the baseline set,</p></li><li><p>require an objective margin before adding extra Triton candidates,</p></li><li><p>compare every panel against non-Triton baseline runs.</p></li></ul>
+<p>The lesson was simple: faster candidate generation helps only when it increases accepted improvements.</p>
+<h2 class="v2">The Final System</h2>
+<p>The runtime-controlled flow looked like this:</p>
+<figure class="sz" style="--iw:1456px;--ar:2.1071"><img src="../../assets/blog/partcl-3b256161-1820x864.png" width="1456" height="691" alt="" width="1456" height="691" loading="lazy" decoding="async"></figure>
+<h2 class="v2">What We Learned</h2>
+<p>Macro placement is not solved by a floorplan that only looks clean. The useful question is whether the placement leaves routing capacity where the netlist needs it.</p>
+<p>Our main takeaways were:</p>
+<ul><li><p>Optimize the proxy components, not just the scalar score.</p></li><li><p>Treat congestion as the primary target once HPWL is low.</p></li><li><p>Use multi-start only when starts represent different physical basins.</p></li><li><p>Keep soft macros in the repair loop; they are useful congestion actuators.</p></li><li><p>Escape plateaus by changing proposal classes, not by loosening acceptance.</p></li><li><p>Use GPU acceleration to rank more candidates, while exact scoring decides what survives.</p></li><li><p>Keep Xplace, Triton, and gradient descent behind legality and full-suite validation.</p></li><li><p>Match scorer precision before claiming zero overlaps.</p></li></ul>
+<p>The final verified leaderboard score was a rank-1 average proxy cost of 0.9507 with zero hard-macro overlaps. The technical process behind that score was straightforward in principle: propose broadly, score exactly, accept carefully, and validate across the full benchmark suite.</p>
+<hr>
+<p>The team behind Archgen Submission : <br><strong><a href="https://www.linkedin.com/in/naveenvenkat17/" target="_blank" rel="noopener">Naveen Venkat</a></strong>, <strong><a href="https://www.linkedin.com/in/hariharan-ayappane/" target="_blank" rel="noopener">Hariharan Ayappane</a></strong>, and <strong><a href="https://www.linkedin.com/in/jishnu-madav-2b600128b/" target="_blank" rel="noopener">Jishnu Madhav</a></strong>. <br><br>Visit <a href="../../index.html">ArchGen.tech</a> for more details.</p>
+<hr>
+<p><em><sub>Disclaimer: This article was written with the help of AI.</sub></em></p>
+      </article>
+    </div>
+
+    <nav class="more" aria-label="More posts"><span aria-hidden="true"></span><a class="next" href="why-chip-design-takes-18-months.html"><span class="dir">Older →</span><span class="t">Why Chip Design Still Takes 18 Months, and What AI Can Actually Fix</span></a><a class="pill all" href="../../index.html#blog">All posts</a></nav>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-cta">
+      <div><h2 class="display">Working on chips? Let’s talk.</h2><p class="lede">Tell us what’s slowing your physical design team down.</p></div>
+      <a class="foot-link" href="../../index.html#contact"><b>Contact us</b><span aria-hidden="true">→</span></a>
+    </div>
+    <div class="foot-grid">
+      <div>
+        <div class="defn">
+          <p class="defn-word">archgen <span>/ˈɑːrk·dʒɛn/</span></p>
+          <ol><li>architecture, generated.</li><li>an AI agent for semiconductors.</li><li>design tools for chips stacked in 3D.</li></ol>
+        </div>
+      </div>
+      <div><h2>Pages</h2><ul><li><a href="../../index.html#blog">Blog</a></li><li><a href="../../index.html#contact">Contact</a></li></ul></div>
+      <div><h2>Elsewhere</h2><ul><li><a href="https://x.com/archgen_" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</a></li><li><a href="https://github.com/archgen-ai" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub</a></li><li><a href="https://www.linkedin.com/company/archgen-ai" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn</a></li></ul></div>
+      <div><h2>Write to us</h2><ul><li><a href="mailto:hari@archgen.tech"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.8 6.6 12 12.8l8.2-6.2"/></svg>hari@archgen.tech</a></li><li><a href="mailto:naveen@archgen.tech"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.8 6.6 12 12.8l8.2-6.2"/></svg>naveen@archgen.tech</a></li></ul></div>
+    </div>
+    <div class="wordmark" aria-hidden="true"><svg viewBox="-53 -97 2172 330" preserveAspectRatio="xMidYMid meet"><path fill="currentColor" fill-rule="evenodd" d="M-0 155.3C-0 155 2.8 149.5 6.1 143.1C9.5 136.7 20.5 116 30.5 97C40.5 78 53.4 53.7 59.1 43C64.7 32.3 72.1 18.3 75.5 12L81.6 0.5L94.5 0.2L107.5 -0L119 21.7C151.5 83.2 160.8 100.9 174.3 127.3L189 156L175.3 156L161.5 155.9L151.4 136.7L141.3 117.5L94.4 117.2L47.4 117L37.1 136.5L26.8 156L13.4 156C6 156 -0 155.7 -0 155.3ZM216 112L216 68L271.8 68L327.6 68L329.8 66.4C334.1 63.4 335 60 335 46C335 31.1 334.1 28.2 328.6 25.6L325.2 24L270.6 24L216 24L216 12L216 -0.1L276.2 0.2L336.5 0.5L342.2 3.3C349.1 6.7 356.2 14.2 358.5 20.8C360.7 26.8 361.8 55.5 360.1 64.4C357.1 80.6 346.4 90.7 330.9 91.8C327.1 92 324 92.4 324 92.6C324 93 347.8 129.3 358.1 144.7C361.9 150.3 365 155.2 365 155.5C365 155.8 358.7 156 351 156L337 156L315.8 124L294.5 92L268.3 92L242 92L241.8 123.8L241.5 155.5L228.8 155.8L216 156.1L216 112ZM420.5 154.6C411.2 151.6 404.8 146.3 400.1 137.5L397.5 132.5L397.2 79.6L396.9 26.7L398.5 21.1L400.2 15.5L406 9.8L411.8 4.2L418.5 2.1L425.2 0L479.6 0L534 0L534 12L534 23.9L481 24.2L428 24.5L425.3 27.3L422.5 30L422.2 76L421.9 121.9L423.4 125.5C424.5 128 426 129.5 428.4 130.5L431.9 132L484 132L536 132L536 144L536 156L480.2 155.9C438.2 155.9 423.5 155.6 420.5 154.6ZM571 78L571 -0.1L583.6 0.2L596.1 0.5L596 31.8L595.9 63L609.7 63.2C647.6 63.6 678.5 63.6 687.8 63.2L698 62.7L698 31.3L698 0L711 0L724 0L724 78L724 156L711 156L698 156L698 121.7L698 87.3L647.5 87.4L596.9 87.4L596.4 89.5C596.1 90.7 596 93.2 596.1 95.1C596.2 97 596.3 111.4 596.2 127.2L596 156L583.5 156L571 156L571 78ZM785 155.1C775.2 152 766.7 144.9 762.7 136.2L760.5 131.5L760.5 77.5L760.5 23.5L762.6 19C765.8 12.2 771.4 6.4 777.8 3.3L783.5 0.5L845.2 0.2L907 -0.1L907 12L907 24L850.9 24L794.8 24L791.5 25.5C789.8 26.4 787.8 28.1 787.1 29.3C786.3 30.8 785.9 44.9 785.6 77L785.3 122.5L786.8 125.8C787.6 127.6 789.2 129.6 790.4 130.3C791.9 131.2 803.5 131.6 833.5 131.7C856 131.9 875.9 131.8 877.6 131.5C879.4 131.2 882 129.8 883.4 128.3L886 125.7L886 106.9L886 88L858 88L830 88L830 76.1L830 64.2L863.8 63.8C882.3 63.6 900.8 63.7 904.8 63.8L912.1 64.2L911.8 97.8L911.5 131.5L909.3 136.2C906.3 142.8 899.7 149.5 893.1 152.7L887.5 155.5L837.5 155.7C810 155.8 786.4 155.5 785 155.1ZM948.7 155.2C947.9 154 947.8 7.4 948.6 3.6L949.2 0L1018.6 0L1088 0L1088 12L1088 24L1031.2 24.2L974.5 24.5L974.2 43.8L974 63L1023 63L1072 63L1072 75L1072 87L1023 87L974 87L974 109L974 131L976.2 131.2C978.9 131.5 979.8 131.5 1040.8 131.8L1088 132L1088 144L1088 156L1018.6 156C980.4 156 948.9 155.7 948.7 155.2ZM1123 78L1123 0L1136.5 -0C1146.9 -0 1150.1 0.3 1150.7 1.4C1151.1 2.2 1155 6.8 1159.2 11.6C1168.9 22.9 1195.7 54.4 1207.7 68.6C1222.8 86.6 1241 108.2 1245.7 113.5L1250 118.5L1250 59.2L1250 0L1262.5 0L1275 0L1275 78L1275 156L1262.2 155.9L1249.5 155.9L1243.5 148.8C1240.2 144.9 1232 135.1 1225.2 127.1C1218.4 119.1 1209.8 108.9 1206.2 104.6C1192.7 88.6 1174.5 67.1 1162.2 52.6L1149.5 37.7L1148.8 44.6C1148.4 48.4 1148.2 75 1148.4 103.8L1148.8 156L1135.9 156L1123 156L1123 78ZM1389 78L1389 0L1402.6 -0L1416.2 -0L1415.8 64C1415.6 99.2 1415.7 128.4 1416 129C1416.4 129.6 1435 130.1 1466.6 130.2L1516.5 130.5L1516.8 143.2L1517.1 156L1453 156L1389 156L1389 78ZM1537 155.6C1537 155.4 1541.1 147.4 1546.1 137.9C1551.1 128.3 1558.3 114.4 1562.2 107C1566.1 99.6 1580.3 72.5 1593.8 46.8L1618.4 0L1631.1 -0L1643.8 -0L1650.8 13.2C1654.6 20.5 1661.5 33.5 1666 42C1685.7 79.1 1725 154.6 1725 155.5C1725 155.8 1719 156 1711.6 156L1698.2 156L1687.8 136.5L1677.5 117L1630.9 117L1584.4 117L1574 136.5L1563.6 156L1550.3 156C1543 156 1537 155.8 1537 155.6ZM1748 78L1748 -0.1L1807.8 0.2L1867.5 0.5L1873.1 3.3C1879.7 6.5 1886.3 13.2 1889.3 19.8L1891.5 24.5L1891.5 42.5L1891.5 60.5L1888.9 66L1886.3 71.6L1891.1 76.9C1898.4 84.7 1899.2 88.7 1898.8 112.3L1898.5 131.5L1895.6 137.3C1892 144.3 1886.7 149.3 1879.1 152.9L1873.5 155.5L1810.8 155.8L1748 156.1L1748 78ZM1931 143.6L1931 131.3L1934.8 130.6C1936.8 130.3 1959.7 130 1985.5 130L2032.6 130L2034.9 128.4C2038.8 125.6 2040 121.1 2040 109C2040 97.6 2039.1 94 2035.4 90.9L2033.7 89.5L1994.1 89L1954.5 88.4L1948.9 86.2C1941 83 1935.7 78.1 1931.8 70.2L1928.5 63.6L1928.2 46.5C1927.9 36.2 1928.3 27.5 1928.9 24.5C1931.4 13.7 1940.1 4.6 1951.1 1.6L1956.6 -0L2006.8 -0L2057 0L2057 4.8C2057 7.5 2056.7 13.1 2056.4 17.3L2055.7 25L2009.3 25L1962.9 25L1960 26.5C1958.4 27.3 1956.6 28.9 1956 29.9C1955.5 31 1955 37.6 1955 44.5L1955 57.2L1957.8 60L1960.7 62.8L2000.6 63.2L2040.5 63.5L2046.1 66.1C2053.4 69.5 2058.9 74.6 2062.6 81.2L2065.5 86.5L2065.5 109L2065.5 131.5L2063.1 136.8C2059.6 144.4 2051.6 151.4 2043.3 154L2036.8 156L1983.9 156L1931 156L1931 143.6ZM1868 128.2C1872.3 125 1873 122.3 1873 109.2C1873 95.5 1872 92.1 1867.1 89.5L1864.2 88L1828.8 88C1809.4 88 1788.9 88 1783.2 88L1773 88L1773 108.9L1773 129.9L1774.7 130.2C1775.6 130.4 1796.4 130.4 1820.9 130.3L1865.5 130L1868 128.2ZM128.7 92.2C128.4 91.8 120.9 77.6 112 60.5C103.1 43.4 95.5 29.2 95.1 28.7C94.4 28 88 39.6 69.7 74.8L60.2 93L94.7 93C113.6 93 128.9 92.7 128.7 92.2ZM1665 92.5C1665 92.1 1647.9 59 1636.6 37.8C1633.8 32.4 1631.3 28 1631 28C1630.4 28 1625.7 36.9 1608.6 70.2L1596.9 93L1630.9 93C1649.7 93 1665 92.8 1665 92.5ZM1862.1 60.1L1865 57.2L1865 44.6L1865 32L1862.1 28.8L1859.2 25.5L1816.3 25.5L1773.5 25.5L1773.2 44.2L1773 63L1816.1 63L1859.2 63L1862.1 60.1Z"/></svg></div>
+  </div>
+  <div class="foot-base"><div class="wrap" style="display:flex;flex-wrap:wrap;gap:10px 28px;justify-content:space-between;width:100%"><span>© 2026 Archgen Labs</span><a href="#main" id="totop">Back to top ↑</a></div></div>
+</footer>
+
+<dialog class="lb" id="lb" aria-label="Figure"><img alt=""><p></p><button class="lb-x" type="button" aria-label="Close figure">×</button></dialog>
+<script src="../post.js" defer></script>
+<script defer src="../figures/three-kit.js"></script>
+<script defer src="../figures/how-we-ranked-first-in-the-partcl.3d.js"></script>
+</body>
+</html>

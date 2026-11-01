@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "description": "Build tools for archgen.tech: npm install once, then sh tools/build.sh",
+  "devDependencies": {
+    "esbuild": "0.24.0"
+  }
+}

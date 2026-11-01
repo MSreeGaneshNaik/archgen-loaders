@@ -1,0 +1,46 @@
+{
+  "how-we-ranked-first-in-the-partcl": {
+    "wide": [
+      1276,
+      876
+    ],
+    "readout": "placed 0 of 8 · overlaps 6",
+    "narrow": [
+      716,
+      644
+    ]
+  },
+  "why-chip-design-takes-18-months": {
+    "wide": [
+      1276,
+      876
+    ],
+    "readout": "loop 1 · Floorplan",
+    "narrow": [
+      716,
+      644
+    ]
+  },
+  "cognitive-agents-next-era-silicon": {
+    "wide": [
+      1276,
+      876
+    ],
+    "readout": "iteration 1 · orchestrator",
+    "narrow": [
+      716,
+      644
+    ]
+  },
+  "disrupting-semiconductor-ai-agents": {
+    "wide": [
+      1276,
+      876
+    ],
+    "readout": "to Spec · 0 dies out",
+    "narrow": [
+      716,
+      644
+    ]
+  }
+}

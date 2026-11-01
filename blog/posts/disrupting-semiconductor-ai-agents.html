@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>/* every page opens at its top: no restored scroll position, so nothing slides or lands mid-page on open or reload */if("scrollRestoration" in history)history.scrollRestoration="manual";</script>
+<meta charset="utf-8">
+<!-- fonts:head -->
+<script>/* opened from disk: fonts can't be fetched on file://, so they come from a script instead (never loaded over http) */
+if(location.protocol==="file:")document.write('<script src="'+(/\/blog\/posts\//.test(location.pathname)?"../../":"")+'assets/fonts/local-fonts.js"><\/script>')</script>
+<!-- /fonts:head -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>On Disrupting the Semiconductor Industry with AI Agents | Archgen Labs</title>
+<meta name="description" content="Accelerating chip design of CPUs, GPUs and TPUs using an ecosystem of AI agents">
+<link rel="canonical" href="https://archgen.tech/blog/posts/disrupting-semiconductor-ai-agents.html">
+<meta name="author" content="Hariharan Ayappane &amp; Naveen Venkat">
+<meta name="theme-color" content="#E8EDF1">
+<link rel="icon" type="image/svg+xml" href="../../assets/logo/archgen-ai-favicon-red.svg">
+<link rel="apple-touch-icon" href="../../assets/logo/apple-touch-icon.png">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Archgen Labs">
+<meta property="og:url" content="https://archgen.tech/blog/posts/disrupting-semiconductor-ai-agents.html">
+<meta property="og:title" content="On Disrupting the Semiconductor Industry with AI Agents">
+<meta property="og:description" content="Accelerating chip design of CPUs, GPUs and TPUs using an ecosystem of AI agents">
+<meta property="og:image" content="https://archgen.tech/assets/social/og-1200x630.png">
+<meta property="article:published_time" content="2025-12-17">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@archgen_">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "On Disrupting the Semiconductor Industry with AI Agents", "description": "Accelerating chip design of CPUs, GPUs and TPUs using an ecosystem of AI agents", "datePublished": "2025-12-17", "url": "https://archgen.tech/blog/posts/disrupting-semiconductor-ai-agents.html", "mainEntityOfPage": "https://archgen.tech/blog/posts/disrupting-semiconductor-ai-agents.html", "author": [{"@type": "Person", "name": "Hariharan Ayappane"}, {"@type": "Person", "name": "Naveen Venkat"}], "publisher": {"@type": "Organization", "name": "Archgen Labs", "url": "https://archgen.tech/", "logo": {"@type": "ImageObject", "url": "https://archgen.tech/assets/logo/archgen-ai-icon-512.png"}}, "image": "https://archgen.tech/assets/social/og-1200x630.png"}</script>
+<link rel="preload" as="font" type="font/woff2" href="../../assets/fonts/cascadia-code-latin.woff2" crossorigin>
+<link rel="stylesheet" href="../post.css">
+<style>.ag-fig,.fig{margin:0}.fig-plate{position:relative;aspect-ratio:16/11;border-radius:14px;background:#f7fafb;box-shadow:0 0 0 1px #738a9a;overflow:hidden;outline:none;isolation:isolate}.fig-plate:focus-visible{box-shadow:0 0 0 1px #738a9a,0 0 0 3px #d65148}.fig-poster,.fig-poster img,.ag3d-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}.fig-poster img{object-fit:cover}.ag3d-canvas{opacity:0;transition:opacity .35s cubic-bezier(.2,.9,.3,1);cursor:grab;touch-action:pan-y}.ag3d-canvas:active{cursor:grabbing}.is-3d .ag3d-canvas{opacity:1}.is-live .fig-poster{visibility:hidden}.fig-corner{position:absolute;z-index:1;pointer-events:none;color:#0e131799;font:10.5px/1 Cascadia Code,ui-monospace,Consolas,monospace;letter-spacing:.04em;white-space:nowrap}.fig-corner[data-corner=fig]{top:18px;left:20px;color:#0e1317bd}.fig-corner[data-corner=title]{top:18px;right:20px;text-transform:uppercase;letter-spacing:.1em}.fig-corner[data-corner=hint]{bottom:18px;left:20px;text-transform:uppercase;letter-spacing:.1em}.fig-corner[data-corner=readout]{bottom:18px;right:20px;color:#0e1317bd;font-variant-numeric:tabular-nums}.fig-keys{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font:13px/1.55 Cascadia Code,ui-monospace,Consolas,monospace;color:#0e1317bd}.fig-key{display:inline-flex;align-items:center;gap:8px}.fig-key:before{content:"";flex:none;width:8px;height:8px;border:1.5px solid #435565;border-radius:1.5px;transform:rotate(45deg) skew(-12deg,-12deg)}.fig-key[data-mark=red]:before{border-color:#d65148;background:#d6514824}@media (max-width:560px){.fig-plate{aspect-ratio:10/9}.fig-corner[data-corner=fig],.fig-corner[data-corner=title]{top:14px}.fig-corner[data-corner=fig],.fig-corner[data-corner=hint]{left:14px}.fig-corner[data-corner=title],.fig-corner[data-corner=readout]{right:14px}.fig-corner[data-corner=hint]{bottom:32px}.fig-corner[data-corner=readout]{bottom:14px}}
+</style>
+<link rel="stylesheet" href="../../assets/css/booking.css">
+<script src="../../assets/js/analytics.js" defer></script>
+<script src="../../assets/js/booking.js" defer></script>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap bar-in">
+    <a class="brand" href="../../index.html#home"><span class="sr-only">Archgen Labs, home. </span><svg class="lockup" viewBox="-53 -97 2172 330" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M-0 155.3C-0 155 2.8 149.5 6.1 143.1C9.5 136.7 20.5 116 30.5 97C40.5 78 53.4 53.7 59.1 43C64.7 32.3 72.1 18.3 75.5 12L81.6 0.5L94.5 0.2L107.5 -0L119 21.7C151.5 83.2 160.8 100.9 174.3 127.3L189 156L175.3 156L161.5 155.9L151.4 136.7L141.3 117.5L94.4 117.2L47.4 117L37.1 136.5L26.8 156L13.4 156C6 156 -0 155.7 -0 155.3ZM216 112L216 68L271.8 68L327.6 68L329.8 66.4C334.1 63.4 335 60 335 46C335 31.1 334.1 28.2 328.6 25.6L325.2 24L270.6 24L216 24L216 12L216 -0.1L276.2 0.2L336.5 0.5L342.2 3.3C349.1 6.7 356.2 14.2 358.5 20.8C360.7 26.8 361.8 55.5 360.1 64.4C357.1 80.6 346.4 90.7 330.9 91.8C327.1 92 324 92.4 324 92.6C324 93 347.8 129.3 358.1 144.7C361.9 150.3 365 155.2 365 155.5C365 155.8 358.7 156 351 156L337 156L315.8 124L294.5 92L268.3 92L242 92L241.8 123.8L241.5 155.5L228.8 155.8L216 156.1L216 112ZM420.5 154.6C411.2 151.6 404.8 146.3 400.1 137.5L397.5 132.5L397.2 79.6L396.9 26.7L398.5 21.1L400.2 15.5L406 9.8L411.8 4.2L418.5 2.1L425.2 0L479.6 0L534 0L534 12L534 23.9L481 24.2L428 24.5L425.3 27.3L422.5 30L422.2 76L421.9 121.9L423.4 125.5C424.5 128 426 129.5 428.4 130.5L431.9 132L484 132L536 132L536 144L536 156L480.2 155.9C438.2 155.9 423.5 155.6 420.5 154.6ZM571 78L571 -0.1L583.6 0.2L596.1 0.5L596 31.8L595.9 63L609.7 63.2C647.6 63.6 678.5 63.6 687.8 63.2L698 62.7L698 31.3L698 0L711 0L724 0L724 78L724 156L711 156L698 156L698 121.7L698 87.3L647.5 87.4L596.9 87.4L596.4 89.5C596.1 90.7 596 93.2 596.1 95.1C596.2 97 596.3 111.4 596.2 127.2L596 156L583.5 156L571 156L571 78ZM785 155.1C775.2 152 766.7 144.9 762.7 136.2L760.5 131.5L760.5 77.5L760.5 23.5L762.6 19C765.8 12.2 771.4 6.4 777.8 3.3L783.5 0.5L845.2 0.2L907 -0.1L907 12L907 24L850.9 24L794.8 24L791.5 25.5C789.8 26.4 787.8 28.1 787.1 29.3C786.3 30.8 785.9 44.9 785.6 77L785.3 122.5L786.8 125.8C787.6 127.6 789.2 129.6 790.4 130.3C791.9 131.2 803.5 131.6 833.5 131.7C856 131.9 875.9 131.8 877.6 131.5C879.4 131.2 882 129.8 883.4 128.3L886 125.7L886 106.9L886 88L858 88L830 88L830 76.1L830 64.2L863.8 63.8C882.3 63.6 900.8 63.7 904.8 63.8L912.1 64.2L911.8 97.8L911.5 131.5L909.3 136.2C906.3 142.8 899.7 149.5 893.1 152.7L887.5 155.5L837.5 155.7C810 155.8 786.4 155.5 785 155.1ZM948.7 155.2C947.9 154 947.8 7.4 948.6 3.6L949.2 0L1018.6 0L1088 0L1088 12L1088 24L1031.2 24.2L974.5 24.5L974.2 43.8L974 63L1023 63L1072 63L1072 75L1072 87L1023 87L974 87L974 109L974 131L976.2 131.2C978.9 131.5 979.8 131.5 1040.8 131.8L1088 132L1088 144L1088 156L1018.6 156C980.4 156 948.9 155.7 948.7 155.2ZM1123 78L1123 0L1136.5 -0C1146.9 -0 1150.1 0.3 1150.7 1.4C1151.1 2.2 1155 6.8 1159.2 11.6C1168.9 22.9 1195.7 54.4 1207.7 68.6C1222.8 86.6 1241 108.2 1245.7 113.5L1250 118.5L1250 59.2L1250 0L1262.5 0L1275 0L1275 78L1275 156L1262.2 155.9L1249.5 155.9L1243.5 148.8C1240.2 144.9 1232 135.1 1225.2 127.1C1218.4 119.1 1209.8 108.9 1206.2 104.6C1192.7 88.6 1174.5 67.1 1162.2 52.6L1149.5 37.7L1148.8 44.6C1148.4 48.4 1148.2 75 1148.4 103.8L1148.8 156L1135.9 156L1123 156L1123 78ZM1389 78L1389 0L1402.6 -0L1416.2 -0L1415.8 64C1415.6 99.2 1415.7 128.4 1416 129C1416.4 129.6 1435 130.1 1466.6 130.2L1516.5 130.5L1516.8 143.2L1517.1 156L1453 156L1389 156L1389 78ZM1537 155.6C1537 155.4 1541.1 147.4 1546.1 137.9C1551.1 128.3 1558.3 114.4 1562.2 107C1566.1 99.6 1580.3 72.5 1593.8 46.8L1618.4 0L1631.1 -0L1643.8 -0L1650.8 13.2C1654.6 20.5 1661.5 33.5 1666 42C1685.7 79.1 1725 154.6 1725 155.5C1725 155.8 1719 156 1711.6 156L1698.2 156L1687.8 136.5L1677.5 117L1630.9 117L1584.4 117L1574 136.5L1563.6 156L1550.3 156C1543 156 1537 155.8 1537 155.6ZM1748 78L1748 -0.1L1807.8 0.2L1867.5 0.5L1873.1 3.3C1879.7 6.5 1886.3 13.2 1889.3 19.8L1891.5 24.5L1891.5 42.5L1891.5 60.5L1888.9 66L1886.3 71.6L1891.1 76.9C1898.4 84.7 1899.2 88.7 1898.8 112.3L1898.5 131.5L1895.6 137.3C1892 144.3 1886.7 149.3 1879.1 152.9L1873.5 155.5L1810.8 155.8L1748 156.1L1748 78ZM1931 143.6L1931 131.3L1934.8 130.6C1936.8 130.3 1959.7 130 1985.5 130L2032.6 130L2034.9 128.4C2038.8 125.6 2040 121.1 2040 109C2040 97.6 2039.1 94 2035.4 90.9L2033.7 89.5L1994.1 89L1954.5 88.4L1948.9 86.2C1941 83 1935.7 78.1 1931.8 70.2L1928.5 63.6L1928.2 46.5C1927.9 36.2 1928.3 27.5 1928.9 24.5C1931.4 13.7 1940.1 4.6 1951.1 1.6L1956.6 -0L2006.8 -0L2057 0L2057 4.8C2057 7.5 2056.7 13.1 2056.4 17.3L2055.7 25L2009.3 25L1962.9 25L1960 26.5C1958.4 27.3 1956.6 28.9 1956 29.9C1955.5 31 1955 37.6 1955 44.5L1955 57.2L1957.8 60L1960.7 62.8L2000.6 63.2L2040.5 63.5L2046.1 66.1C2053.4 69.5 2058.9 74.6 2062.6 81.2L2065.5 86.5L2065.5 109L2065.5 131.5L2063.1 136.8C2059.6 144.4 2051.6 151.4 2043.3 154L2036.8 156L1983.9 156L1931 156L1931 143.6ZM1868 128.2C1872.3 125 1873 122.3 1873 109.2C1873 95.5 1872 92.1 1867.1 89.5L1864.2 88L1828.8 88C1809.4 88 1788.9 88 1783.2 88L1773 88L1773 108.9L1773 129.9L1774.7 130.2C1775.6 130.4 1796.4 130.4 1820.9 130.3L1865.5 130L1868 128.2ZM128.7 92.2C128.4 91.8 120.9 77.6 112 60.5C103.1 43.4 95.5 29.2 95.1 28.7C94.4 28 88 39.6 69.7 74.8L60.2 93L94.7 93C113.6 93 128.9 92.7 128.7 92.2ZM1665 92.5C1665 92.1 1647.9 59 1636.6 37.8C1633.8 32.4 1631.3 28 1631 28C1630.4 28 1625.7 36.9 1608.6 70.2L1596.9 93L1630.9 93C1649.7 93 1665 92.8 1665 92.5ZM1862.1 60.1L1865 57.2L1865 44.6L1865 32L1862.1 28.8L1859.2 25.5L1816.3 25.5L1773.5 25.5L1773.2 44.2L1773 63L1816.1 63L1859.2 63L1862.1 60.1Z"/></svg></a>
+    <nav class="nav" aria-label="Primary"><a href="../../index.html#blog" aria-current="page">Blog</a></nav>
+    <a class="pill" href="../../index.html#contact">Contact <span aria-hidden="true">→</span></a>
+  </div>
+  <div class="progress" aria-hidden="true"></div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+    <div class="post">
+      <header class="post-head">
+        <a class="back" href="../../index.html#blog"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"/></svg>All posts</a>
+        <p class="tag">Vision</p>
+        <h1>On Disrupting the Semiconductor Industry with AI Agents</h1>
+        <p class="meta"><time datetime="2025-12-17">Dec 17, 2025</time><span>8 min read</span><span>Hariharan Ayappane &amp; Naveen Venkat</span></p>
+        <div class="post-fig"><div class="ag-fig" id="fig-disrupting-semiconductor-ai-agents"><figure class="fig"><div class="fig-plate" tabindex="0" role="img" aria-label="ChipOS as a production line: a conveyor carries a die blank under five agent stations, Spec, RTL, Synthesis, Layout and GDSII. Each station dips its tool and leaves its work on the die, and the finished die drops into the out tray at the end."><picture class="fig-poster"><source media="(max-width:560px)" srcset="../../assets/figures/disrupting-semiconductor-ai-agents-narrow.webp" width="716" height="644"><img src="../../assets/figures/disrupting-semiconductor-ai-agents-wide.webp" alt="" width="1276" height="876" decoding="async"></picture><span class="fig-corner" data-corner="fig">Fig 4</span><span class="fig-corner" data-corner="title">ChipOS line</span><span class="fig-corner" data-corner="hint"></span><span class="fig-corner" data-corner="readout" data-readout>to Spec · 0 dies out</span></div><figcaption class="fig-keys"><span class="fig-key" data-mark="body">Agent stations, Spec to GDSII</span><span class="fig-key" data-mark="red">The agent at work</span></figcaption></figure></div></div>
+      </header>
+      <nav class="toc" aria-label="On this page"><h2>On this page</h2><ol></ol></nav>
+      <article class="prose">
+<p class="dek">Accelerating chip design of CPUs, GPUs and TPUs using an ecosystem of AI agents</p>
+<p>The $700 billion dollar chip design industry forms the life blood of modern AI compute by enabling the design
+            and manufacture of massive silicon chips like GPUs, TPUs and CPUs.</p>
+<p>The industry is dominated by players like Nvidia, AMD, Qualcomm, Intel and Texas Instruments who have huge
+            teams of hardware architects, designers, and verification engineers to build plan and build out large
+            Intellectual Property (IPs) and System on Chips (SoC) over months of effort with the help of Electronic
+            Design Automation (EDA) tools. Once the chip (i.e netlist) is designed as passed to the fabrication
+            facility, the scope for error is very minimal as thousands of chips will be manufactured from the netlist
+            and a bug could result in millions in losses. Due to developments in AI and electric vehicles the chips that
+            will be designed by these organisations are getting increasingly complex in terms of performance, area and
+            power with timelines to deliver them only getting tighter.</p>
+<p>The resulting workload has become extremely high for human engineers, making AI assistance inevitable. Coding
+            agents like Claude code or cursor accelerate the lines of code written (LOC) in these organizations, but
+            there is still a huge gap in terms of being able to interact fluently with the tools provided by EDA
+            vendors.</p>
+<figure class="sz" style="--iw:1456px;--ar:3.2573"><img src="../../assets/blog/chip_agents_news.png" width="1456" height="447" alt="Chip Agents and EDA Industry Context" loading="lazy" decoding="async"></figure>
+<p>Traditional EDA vendors are struggling to keep up with the pace of AI and are instead preferring to buy or
+            invest in startups that and iterate and ship fast instead. This opens up a huge opportunity to build agentic
+            systems that integrate into EDA tools to capture additional speed and efficiency for hardware engineers.</p>
+<figure class="sz" style="--iw:1456px;--ar:2.7114"><img src="../../assets/blog/cadence_acquisition.png" width="1456" height="537" alt="Cadence Acquisition News" loading="lazy" decoding="async"></figure>
+<p><strong>We are already seeing trends in this direction, and it's only bound to accelerate.</strong></p>
+<h2 class="v2">How does traditional chip design work?</h2>
+<h3 class="v3">The Architect</h3>
+<p>An architect will first draft the specification document based on the customer's requirements, as well as the
+            IPs and SoCs they might already have access to from previous projects. This allows them to reuse existing
+            IPs as it is or with minimal changes.</p>
+<p>For example say you need a chip to function at 200 MHz, but your organisation only has a 400 MHz clock. As an
+            architect you can suggest to use a clock divider and generate a 200 MHz clock from a 400 MHz clock.</p>
+<h3 class="v3">Behaviour modeling in Verilog</h3>
+<p>Once the spec is developed by the architect, A team of Register Transfer Language (RTL) coders write the
+            verilog behaviour level description of how the chip should implement the spec.</p>
+<h3 class="v3">Design Verification</h3>
+<p>Once the RTL is written a team verification experts will verify if the chip is functionally correct as per
+            the specification written by the architect. This is the stage at which any bugs at the RTL level get caught.</p>
+<h3 class="v3">Synthesis and Timing</h3>
+<p>If the design is functionally correct a team of Physical Design (PD) experts will synthesise the HDL code
+            into logic gates and make sure they fit efficiently onto a die in a way that is area and performance
+            optimized. This is followed by insertion of special logic (scan chains) into the netlist to detect any
+            design flaws during fabrication.</p>
+<p>Once the timing and area optimized netlist is available, it is shared with the fabrication facility and
+            etched it into a silicon wafer.</p>
+<h2 class="v2">The Problem: Chip Design software (EDA) is the bottleneck</h2>
+<p>The rise of AI is a double-edged sword for the semiconductor industry. While the demand for more powerful AI
+            chips skyrockets, the complexity of designing them is growing even faster. It's increasingly evident that AI
+            has pushed chip design past Moore's Law.</p>
+<p>Analysts note that this growth cannot come just from smaller transistors; instead, core counts and
+            system-level integration are rising faster than raw feature-size scaling, so die and package complexity
+            explode as AI model sizes grow.</p>
+<p>As a result of this the software toolkit to design chips, known as Electronic Design Automation (EDA) has
+            become a serious bottleneck in the complexity of chips that can be designed. The current process is
+            agonizingly slow, with large number of context changes between multiple tools which that is prone to human
+            error making it fundamentally unsuited for the AI era.</p>
+<p>EDA and design-tool vendors themselves describe a widening &quot;design productivity gap&quot;: circuit capacity
+            afforded by Moore's Law (more transistors per chip) is growing faster than what existing implementation and
+            verification flows can handle efficiently. Even after major re-architecting of tools for multi-threading and
+            distributed computation, leading EDA providers highlight that designers still struggle to close timing,
+            power, and noise on ever larger blocks (tens of millions of instances per block) and that physical design
+            flows in particular require more research to keep pace with silicon scale.</p>
+<h2 class="v2">The solution: ChipOS</h2>
+<p>The vision of ChipOS is simple: <strong>AI Agents to automate the Spec-to-GDSII development flow by adding
+                intelligence to EDA.</strong></p>
+<p>Chip design will only get more complex. We need to ensure that our developers and our tools are equally
+            powered by AI to keep up with the exponential growth of the industry.</p>
+<p>We are building the next generation of development tools for semiconductor engineers moving from simple
+            automation scripts to truly intelligent AI Agents.</p>
+<p>We will enable this using the following key automations:</p>
+<ul><li><strong>Spec-to-Diagram/Diagram-to-RTL:</strong> Converting high-level specifications directly into
+                logic diagrams and then into synthesis-ready RTL (Register-Transfer Level) code.</li>
+<li><strong>The Physical Design (PD) Agent:</strong> PD is the backbone of generating the transistor data
+                needed from the programmatic description of chip (verilog). It involves multiple steps that take the
+                chip through partitioning to signoff and ensures the design is optimized in terms of power, performance
+                and area. (PPA)</li>
+<li><strong>SoC &amp; Wrapper Generation:</strong> Automatically generating the glue logic and wrappers needed
+                to seamlessly connect disparate sub-chips and protocol bridges.</li>
+<li><strong>Waveform Analysis &amp; Debugging:</strong> Agents analyze complex waveform data, proactively
+                identify root causes of bugs, and suggest fixes in real-time within the BrowserOS environment.</li>
+<li><strong>Hardcore Optimization (PPA &amp; CDC):</strong> Using Reinforcement Learning (RL) to automatically
+                resolve critical issues like Power, Performance, and Area (PPA) trade-offs and elusive CDC problems.
+            </li></ul>
+<p>By automating these time-consuming portions of the EDA flow, we can save large companies millions in
+            engineering time easily thousands of dollars per engineer per year. Our tools enable faster time-to-market
+            and significantly reduce the risk of costly re-spins.</p>
+<p>There has been very little progress in the development of agentic systems and dev-tools that can universally
+            integrate into the tools provided and no one is doing this across all verticals making this a ripe
+            opportunity for disruption.</p>
+<h2 class="v2">Progress so far</h2>
+<h3 class="v3">ChipAgent:</h3>
+<p>At its core, chipAgent is an environment that has all agents and tools needed to complete building a chip.
+            The agents have a comprehensive understanding how how to use these tools and debug issues.</p>
+<figure class="sz" style="--iw:1112px;--ar:0.7831"><picture><source type="image/webp" srcset="../../assets/blog/chip_agent_architecture.webp"><img src="../../assets/blog/chip_agent_architecture.png" width="1112" height="1420" alt="ChipAgent Architecture" loading="lazy" decoding="async"></picture></figure>
+<p>The current MVP contains:</p>
+<ol><li><strong>Architect agent:</strong> It reviews the chip specification given by the user and comes up with
+                an architecture to design it, using a combination of design knowledge and pre existing IPs and SoCs.
+            </li>
+<li><strong>Entity design agent:</strong> We need a common entity (simplified outline for the chip) to start
+                the RTL and design verification process. This agent plans out the entity and shares it with the RTL and
+                DV agents.</li>
+<li><strong>RTL design agent:</strong> It consumes the entity and architecture and starts writing the
+                verilog RTL code.</li>
+<li><strong>Design verification agent:</strong> It consumes the entity and architecture and starts writing
+                the verilog DV testbench code.</li>
+<li><strong>Physical Design agent:</strong> Once the design passes the design verification, the synthesis
+                agent generates the netlist from the code using SkyWater SKY130 PDK library and openLANE tools it has
+                access to.</li></ol>
+<figure class="sz" style="--iw:794px;--ar:1.3322"><picture><source type="image/webp" srcset="../../assets/blog/synthesis_fifo.webp"><img src="../../assets/blog/synthesis_fifo.png" width="794" height="596" alt="Synthesis Agent Output (FIFO)" loading="lazy" decoding="async"></picture></figure>
+<h3 class="v3">RTLViz:</h3>
+<p>Any hardware engineer needs a good hardware block diagram to describe the core functionality of a chip using
+            hardware specific components like muxes, logic gates or registers that will provide them a comprehensive
+            understanding of how an IP works.</p>
+<p>Low level diagrams (gate level) generated by synthesis tools are hyper detailed and do not give engineers a
+            clear picture of what they're working with at a high level.</p>
+<figure class="sz" style="--iw:1246px;--ar:1.0032"><img src="../../assets/blog/riscv_low_level.png" width="1246" height="1242" alt="Low Level RISCV Diagram" loading="lazy" decoding="async"></figure>
+<p>Currently no automation exists to provide clear high level hardware block diagrams using hardware components
+            due to a severe lack of training data for chip design diagrams. Most people make do with mermaid diagrams
+            that produce flow charts or spend hours designing a diagram on PowerPoint.</p>
+<figure class="sz" style="--iw:1456px;--ar:1.6378"><img src="../../assets/blog/ideal_block_diagram.png" width="1456" height="889" alt="Ideal Block Diagram (Hand Drawn)" loading="lazy" decoding="async"></figure>
+<p>We enable this in two phases:</p>
+<p><strong>Phase 1: The Semantic Engine (The Brains)</strong></p>
+<p>We use an LLM to read the RTL and answer the &quot;human&quot; questions. It figures out if a block is doing math or
+            handling logic. The biggest win here was our &quot;Golden Rule of Staging.&quot; We realised that a component belongs
+            to the pipeline stage where its inputs first become available. This creates a logical flow from left to
+            right that actually makes sense using which the abstract graph can be built by parsing the HDL code.</p>
+<p><strong>Phase 2: The Rendering Engine (The Hands)</strong></p>
+<p>Once the AI builds the abstract graph, we lock it out. We hand the data over to a deterministic engine. This
+            handles the layout using orthogonal routing and applies strict styling rules. This split ensures that if you
+            run the tool twice, you get the exact same diagram for reproducibility.</p>
+<figure class="sz" style="--iw:1456px;--ar:2.4146"><picture><source type="image/webp" srcset="../../assets/blog/rtlviz_diagram.webp"><img src="../../assets/blog/rtlviz_diagram.png" width="1456" height="603" alt="RTLViz Generated Diagram" loading="lazy" decoding="async"></picture></figure>
+<h2 class="v2">Future work</h2>
+<p>Expand the RTL agent to handle more complex chip design tasks, including but not limited to:</p>
+<h3 class="v4">Lint and Clock Domain Crossing (CDC) Error Fixing</h3>
+<p>Years of experience are required to debug complex issues like Clock Domain Crossing (CDC). Linting rules
+            constantly change, leaving massive legacy codebases in a state of perpetual clean-up. We can develop
+            specialised agents to assist in debugging lint/CDC issues that are integrated with Cadence Jasper CDC.</p>
+<h3 class="v4">System on Chip (SoC) Integration Automation</h3>
+<p>Connecting complex sub-chips is a manual, tedious process. Integrating diverse internal protocols (like AXI,
+            AHB) demands significant engineering time and creates integration headaches. Wrapper agents with context on
+            an organizations protocols will be able to solve this problem.</p>
+<h3 class="v4">Debugging &amp; Verification</h3>
+<p>Analyzing dense waveforms and logs is a grueling task. Design specs often become outdated or are
+            misinterpreted, leading to costly silicon re-spins.</p>
+<h3 class="v4">Legacy Tooling</h3>
+<p>EDA vendors need better tools as well, they are just focused on their core competence, but AI opens so many
+            more possibilities in terms of providing useful tools to hardware engineers including but not limited to
+            detailed block diagram generation, agentic resolution of clock domain crossing (CDC) errors or self
+            correcting RTL generation.</p>
+<p><strong>We are moving into a new era in chip design where we will have agents that can interact with tools to
+                perform different tasks and engineers to configure and monitor these agents. ChipsOS will lead this
+                change through chip agents that will use iterative loops to self diagnose issues using agentic memory
+                and logging, leading to chips being shipped in record time to market.</strong></p>
+<h3 class="v3">Note:</h3>
+<p>RTLViz is our MCP (Model Context Protocol) server that enables AI assistants to generate publication-quality
+            RTL block diagrams from Verilog/SystemVerilog code.<br>
+            Check out RTLViz here: <a href="https://pypi.org/project/rtlviz/#content" target="_blank" rel="noopener">https://pypi.org/project/rtlviz/</a></p>
+<h3 class="v3">Citations:</h3>
+<ol><li><a href="https://www.vktr.com/ai-technology/the-end-of-moores-law-ai-chipmakers-say-its-already-happened/" target="_blank" rel="noopener">https://www.vktr.com/ai-technology/the-end-of-moores-law-ai-chipmakers-say-its-already-happened/</a>
+</li>
+<li><a href="https://techcrunch.com/2025/01/07/nvidia-ceo-says-his-ai-chips-are-improving-faster-than-moores-law/" target="_blank" rel="noopener">https://techcrunch.com/2025/01/07/nvidia-ceo-says-his-ai-chips-are-improving-faster-than-moores-law/</a>
+</li>
+<li><a href="https://www.allpcb.com/allelectrohub/how-to-achieve-a-trillion-transistor-gpu" target="_blank" rel="noopener">https://www.allpcb.com/allelectrohub/how-to-achieve-a-trillion-transistor-gpu</a>
+</li>
+<li><a href="https://github.com/chipsalliance/chisel" target="_blank" rel="noopener">https://github.com/chipsalliance/chisel</a></li>
+<li><a href="https://chipagents.ai/" target="_blank" rel="noopener">https://chipagents.ai/</a></li></ol>
+<hr>
+<p>Originally published on <a href="https://haran2001.substack.com/p/on-disrupting-the-semiconductor-industry" target="_blank" rel="noopener">Substack</a>.</p>
+      </article>
+    </div>
+
+    <nav class="more" aria-label="More posts"><a class="prev" href="cognitive-agents-next-era-silicon.html"><span class="dir">← Newer</span><span class="t">Cognitive Agents for the Next Era of Silicon</span></a><a class="pill all" href="../../index.html#blog">All posts</a></nav>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-cta">
+      <div><h2 class="display">Working on chips? Let’s talk.</h2><p class="lede">Tell us what’s slowing your physical design team down.</p></div>
+      <a class="foot-link" href="../../index.html#contact"><b>Contact us</b><span aria-hidden="true">→</span></a>
+    </div>
+    <div class="foot-grid">
+      <div>
+        <div class="defn">
+          <p class="defn-word">archgen <span>/ˈɑːrk·dʒɛn/</span></p>
+          <ol><li>architecture, generated.</li><li>an AI agent for semiconductors.</li><li>design tools for chips stacked in 3D.</li></ol>
+        </div>
+      </div>
+      <div><h2>Pages</h2><ul><li><a href="../../index.html#blog">Blog</a></li><li><a href="../../index.html#contact">Contact</a></li></ul></div>
+      <div><h2>Elsewhere</h2><ul><li><a href="https://x.com/archgen_" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</a></li><li><a href="https://github.com/archgen-ai" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub</a></li><li><a href="https://www.linkedin.com/company/archgen-ai" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn</a></li></ul></div>
+      <div><h2>Write to us</h2><ul><li><a href="mailto:hari@archgen.tech"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.8 6.6 12 12.8l8.2-6.2"/></svg>hari@archgen.tech</a></li><li><a href="mailto:naveen@archgen.tech"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.8 6.6 12 12.8l8.2-6.2"/></svg>naveen@archgen.tech</a></li></ul></div>
+    </div>
+    <div class="wordmark" aria-hidden="true"><svg viewBox="-53 -97 2172 330" preserveAspectRatio="xMidYMid meet"><path fill="currentColor" fill-rule="evenodd" d="M-0 155.3C-0 155 2.8 149.5 6.1 143.1C9.5 136.7 20.5 116 30.5 97C40.5 78 53.4 53.7 59.1 43C64.7 32.3 72.1 18.3 75.5 12L81.6 0.5L94.5 0.2L107.5 -0L119 21.7C151.5 83.2 160.8 100.9 174.3 127.3L189 156L175.3 156L161.5 155.9L151.4 136.7L141.3 117.5L94.4 117.2L47.4 117L37.1 136.5L26.8 156L13.4 156C6 156 -0 155.7 -0 155.3ZM216 112L216 68L271.8 68L327.6 68L329.8 66.4C334.1 63.4 335 60 335 46C335 31.1 334.1 28.2 328.6 25.6L325.2 24L270.6 24L216 24L216 12L216 -0.1L276.2 0.2L336.5 0.5L342.2 3.3C349.1 6.7 356.2 14.2 358.5 20.8C360.7 26.8 361.8 55.5 360.1 64.4C357.1 80.6 346.4 90.7 330.9 91.8C327.1 92 324 92.4 324 92.6C324 93 347.8 129.3 358.1 144.7C361.9 150.3 365 155.2 365 155.5C365 155.8 358.7 156 351 156L337 156L315.8 124L294.5 92L268.3 92L242 92L241.8 123.8L241.5 155.5L228.8 155.8L216 156.1L216 112ZM420.5 154.6C411.2 151.6 404.8 146.3 400.1 137.5L397.5 132.5L397.2 79.6L396.9 26.7L398.5 21.1L400.2 15.5L406 9.8L411.8 4.2L418.5 2.1L425.2 0L479.6 0L534 0L534 12L534 23.9L481 24.2L428 24.5L425.3 27.3L422.5 30L422.2 76L421.9 121.9L423.4 125.5C424.5 128 426 129.5 428.4 130.5L431.9 132L484 132L536 132L536 144L536 156L480.2 155.9C438.2 155.9 423.5 155.6 420.5 154.6ZM571 78L571 -0.1L583.6 0.2L596.1 0.5L596 31.8L595.9 63L609.7 63.2C647.6 63.6 678.5 63.6 687.8 63.2L698 62.7L698 31.3L698 0L711 0L724 0L724 78L724 156L711 156L698 156L698 121.7L698 87.3L647.5 87.4L596.9 87.4L596.4 89.5C596.1 90.7 596 93.2 596.1 95.1C596.2 97 596.3 111.4 596.2 127.2L596 156L583.5 156L571 156L571 78ZM785 155.1C775.2 152 766.7 144.9 762.7 136.2L760.5 131.5L760.5 77.5L760.5 23.5L762.6 19C765.8 12.2 771.4 6.4 777.8 3.3L783.5 0.5L845.2 0.2L907 -0.1L907 12L907 24L850.9 24L794.8 24L791.5 25.5C789.8 26.4 787.8 28.1 787.1 29.3C786.3 30.8 785.9 44.9 785.6 77L785.3 122.5L786.8 125.8C787.6 127.6 789.2 129.6 790.4 130.3C791.9 131.2 803.5 131.6 833.5 131.7C856 131.9 875.9 131.8 877.6 131.5C879.4 131.2 882 129.8 883.4 128.3L886 125.7L886 106.9L886 88L858 88L830 88L830 76.1L830 64.2L863.8 63.8C882.3 63.6 900.8 63.7 904.8 63.8L912.1 64.2L911.8 97.8L911.5 131.5L909.3 136.2C906.3 142.8 899.7 149.5 893.1 152.7L887.5 155.5L837.5 155.7C810 155.8 786.4 155.5 785 155.1ZM948.7 155.2C947.9 154 947.8 7.4 948.6 3.6L949.2 0L1018.6 0L1088 0L1088 12L1088 24L1031.2 24.2L974.5 24.5L974.2 43.8L974 63L1023 63L1072 63L1072 75L1072 87L1023 87L974 87L974 109L974 131L976.2 131.2C978.9 131.5 979.8 131.5 1040.8 131.8L1088 132L1088 144L1088 156L1018.6 156C980.4 156 948.9 155.7 948.7 155.2ZM1123 78L1123 0L1136.5 -0C1146.9 -0 1150.1 0.3 1150.7 1.4C1151.1 2.2 1155 6.8 1159.2 11.6C1168.9 22.9 1195.7 54.4 1207.7 68.6C1222.8 86.6 1241 108.2 1245.7 113.5L1250 118.5L1250 59.2L1250 0L1262.5 0L1275 0L1275 78L1275 156L1262.2 155.9L1249.5 155.9L1243.5 148.8C1240.2 144.9 1232 135.1 1225.2 127.1C1218.4 119.1 1209.8 108.9 1206.2 104.6C1192.7 88.6 1174.5 67.1 1162.2 52.6L1149.5 37.7L1148.8 44.6C1148.4 48.4 1148.2 75 1148.4 103.8L1148.8 156L1135.9 156L1123 156L1123 78ZM1389 78L1389 0L1402.6 -0L1416.2 -0L1415.8 64C1415.6 99.2 1415.7 128.4 1416 129C1416.4 129.6 1435 130.1 1466.6 130.2L1516.5 130.5L1516.8 143.2L1517.1 156L1453 156L1389 156L1389 78ZM1537 155.6C1537 155.4 1541.1 147.4 1546.1 137.9C1551.1 128.3 1558.3 114.4 1562.2 107C1566.1 99.6 1580.3 72.5 1593.8 46.8L1618.4 0L1631.1 -0L1643.8 -0L1650.8 13.2C1654.6 20.5 1661.5 33.5 1666 42C1685.7 79.1 1725 154.6 1725 155.5C1725 155.8 1719 156 1711.6 156L1698.2 156L1687.8 136.5L1677.5 117L1630.9 117L1584.4 117L1574 136.5L1563.6 156L1550.3 156C1543 156 1537 155.8 1537 155.6ZM1748 78L1748 -0.1L1807.8 0.2L1867.5 0.5L1873.1 3.3C1879.7 6.5 1886.3 13.2 1889.3 19.8L1891.5 24.5L1891.5 42.5L1891.5 60.5L1888.9 66L1886.3 71.6L1891.1 76.9C1898.4 84.7 1899.2 88.7 1898.8 112.3L1898.5 131.5L1895.6 137.3C1892 144.3 1886.7 149.3 1879.1 152.9L1873.5 155.5L1810.8 155.8L1748 156.1L1748 78ZM1931 143.6L1931 131.3L1934.8 130.6C1936.8 130.3 1959.7 130 1985.5 130L2032.6 130L2034.9 128.4C2038.8 125.6 2040 121.1 2040 109C2040 97.6 2039.1 94 2035.4 90.9L2033.7 89.5L1994.1 89L1954.5 88.4L1948.9 86.2C1941 83 1935.7 78.1 1931.8 70.2L1928.5 63.6L1928.2 46.5C1927.9 36.2 1928.3 27.5 1928.9 24.5C1931.4 13.7 1940.1 4.6 1951.1 1.6L1956.6 -0L2006.8 -0L2057 0L2057 4.8C2057 7.5 2056.7 13.1 2056.4 17.3L2055.7 25L2009.3 25L1962.9 25L1960 26.5C1958.4 27.3 1956.6 28.9 1956 29.9C1955.5 31 1955 37.6 1955 44.5L1955 57.2L1957.8 60L1960.7 62.8L2000.6 63.2L2040.5 63.5L2046.1 66.1C2053.4 69.5 2058.9 74.6 2062.6 81.2L2065.5 86.5L2065.5 109L2065.5 131.5L2063.1 136.8C2059.6 144.4 2051.6 151.4 2043.3 154L2036.8 156L1983.9 156L1931 156L1931 143.6ZM1868 128.2C1872.3 125 1873 122.3 1873 109.2C1873 95.5 1872 92.1 1867.1 89.5L1864.2 88L1828.8 88C1809.4 88 1788.9 88 1783.2 88L1773 88L1773 108.9L1773 129.9L1774.7 130.2C1775.6 130.4 1796.4 130.4 1820.9 130.3L1865.5 130L1868 128.2ZM128.7 92.2C128.4 91.8 120.9 77.6 112 60.5C103.1 43.4 95.5 29.2 95.1 28.7C94.4 28 88 39.6 69.7 74.8L60.2 93L94.7 93C113.6 93 128.9 92.7 128.7 92.2ZM1665 92.5C1665 92.1 1647.9 59 1636.6 37.8C1633.8 32.4 1631.3 28 1631 28C1630.4 28 1625.7 36.9 1608.6 70.2L1596.9 93L1630.9 93C1649.7 93 1665 92.8 1665 92.5ZM1862.1 60.1L1865 57.2L1865 44.6L1865 32L1862.1 28.8L1859.2 25.5L1816.3 25.5L1773.5 25.5L1773.2 44.2L1773 63L1816.1 63L1859.2 63L1862.1 60.1Z"/></svg></div>
+  </div>
+  <div class="foot-base"><div class="wrap" style="display:flex;flex-wrap:wrap;gap:10px 28px;justify-content:space-between;width:100%"><span>© 2026 Archgen Labs</span><a href="#main" id="totop">Back to top ↑</a></div></div>
+</footer>
+
+<dialog class="lb" id="lb" aria-label="Figure"><img alt=""><p></p><button class="lb-x" type="button" aria-label="Close figure">×</button></dialog>
+<script src="../post.js" defer></script>
+<script defer src="../figures/three-kit.js"></script>
+<script defer src="../figures/disrupting-semiconductor-ai-agents.3d.js"></script>
+</body>
+</html>
