@@ -25,6 +25,9 @@ footer = re.sub(r'href="#(home|blog|contact)"', lambda m: f'href="../../index.ht
 # the file:// font shim, shared with the site
 fonts_head = re.search(r'<!-- fonts:head -->.*?<!-- /fonts:head -->', index, re.S).group(0)
 assert '<svg' in lockup and 'foot-grid' in footer
+# the loading screen is inlined into every page (no extra requests before first paint); its sources stay in assets/
+LOADER_CSS = '<style id="agl-css">\n' + open(os.path.join(ROOT, 'assets', 'css', 'archgen-loader.css'), encoding='utf-8').read().strip() + '\n</style>'
+LOADER_JS = '<script id="agl-js">\n' + open(os.path.join(ROOT, 'assets', 'js', 'archgen-loader-route.js'), encoding='utf-8').read().strip() + '\n</script>'
 
 ARROW_L = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"/></svg>'
 e = lambda s: html.escape(s, quote=True)
@@ -125,12 +128,12 @@ for i, slug in enumerate(order):
 <link rel="preload" as="font" type="font/woff2" href="../../assets/fonts/cascadia-code-latin.woff2" crossorigin>
 <link rel="stylesheet" href="../post.css">
 {fig_head}<link rel="stylesheet" href="../../assets/css/booking.css">
-<link rel="stylesheet" href="../../assets/css/archgen-loader.css">
+{LOADER_CSS}
 <script src="../../assets/js/analytics.js" defer></script>
 <script src="../../assets/js/booking.js" defer></script>
 </head>
 <body>
-<script src="../../assets/js/archgen-loader-route.js"></script>
+{LOADER_JS}
 <header class="bar">
   <div class="wrap bar-in">
     <a class="brand" href="../../index.html#home"><span class="sr-only">Archgen Labs, home. </span>{lockup}</a>
@@ -181,6 +184,10 @@ items = ''.join(f'''
 idx_path = os.path.join(ROOT, 'index.html')
 idx, n = re.subn(r'(<ol class="posts" id="posts">).*?(\n    </ol>)', lambda m: m.group(1) + items + m.group(2), index, count=1, flags=re.S)
 assert n == 1, 'index.html: <ol class="posts" id="posts"> not found'
+# refresh the inlined loading screen from its sources
+for block, rx in ((LOADER_CSS, r'<style id="agl-css">.*?</style>'), (LOADER_JS, r'<script id="agl-js">.*?</script>')):
+    idx, n = re.subn(rx, lambda m: block, idx, count=1, flags=re.S)
+    assert n == 1, 'index.html: inlined loader block not found: ' + rx
 open(idx_path, 'w', encoding='utf-8').write(idx)
 print('wrote index.html  blog list, %d posts' % len(order))
 
