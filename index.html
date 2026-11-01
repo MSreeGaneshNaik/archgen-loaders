@@ -868,6 +868,7 @@ main{position:relative;z-index:1;background:var(--ink);display:flow-root}
 /* ---------- 3D stacking: copy beside an exploded stack drawn in code ---------- */
 .s3d{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.25fr);gap:clamp(28px,5vw,80px);align-items:center;padding-block:clamp(72px,10vw,150px) clamp(40px,6vw,80px)}
 @media (max-width:860px){.s3d{grid-template-columns:minmax(0,1fr)}}
+@media (min-width:601px) and (max-width:699px){.poster{min-height:240px}}   /* larger phones: the same tight poster */
 .s3d-copy{display:grid;gap:22px;align-content:start}
 .nw{white-space:nowrap}
 .s3d-copy .display{font-size:clamp(28px,2.55vw,44px);max-width:none;text-wrap:balance}
@@ -909,7 +910,7 @@ main{position:relative;z-index:1;background:var(--ink);display:flow-root}
   .s3l.on b::before{background:var(--flare)}
   .s3d-hl .s3d-cap{justify-content:center;margin-top:8px}
   .s3d-cap #s3d-read{display:none}
-  .poster{min-height:380px}
+  .poster{min-height:256px}   /* just the title and its line, then the caption and editor tuck under (no empty band) */
   .s3d-copy{padding-bottom:16px}
 }
 .s3d-cap{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:4px;font-size:12px;color:var(--paper-3)}
