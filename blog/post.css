@@ -119,8 +119,8 @@ a{color:inherit}
 @media (max-width:640px){.more{grid-template-columns:1fr}.more a.next{text-align:left;justify-items:start}}
 
 /* ---------- footer: the site's close ---------- */
-footer{position:relative;border-top:1px solid var(--line);padding-top:clamp(48px,7vw,90px);background:var(--ink)}
-.foot-cta{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:20px 48px;padding-bottom:clamp(28px,4vw,44px);margin-bottom:clamp(28px,4vw,44px);border-bottom:1px solid var(--line)}
+footer{position:relative;border-top:1px solid var(--line);padding-top:clamp(40px,4vw,56px);background:var(--ink)}
+.foot-cta{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:20px 48px;padding-bottom:clamp(24px,3vw,32px);margin-bottom:clamp(24px,3vw,32px);border-bottom:1px solid var(--line)}
 .foot-cta h2{margin:0;font-size:clamp(28px,3.6vw,52px);line-height:1.04;letter-spacing:-.02em;font-weight:600;max-width:18ch}
 .foot-cta p{margin:10px 0 0;color:var(--paper-2);font-size:clamp(16px,1.25vw,18px)}
 .foot-link{display:inline-flex;align-items:center;gap:12px;font-size:clamp(18px,1.8vw,24px);font-weight:600;text-decoration:none;padding-block:6px;transition:color .2s}
@@ -141,7 +141,7 @@ footer{position:relative;border-top:1px solid var(--line);padding-top:clamp(48px
 .defn-word i{font-size:14px;color:var(--signal);font-style:normal}
 .defn ol{margin:0;padding-left:1.4em;display:grid;gap:4px;color:var(--paper-2);font-size:14px}
 .defn li::marker{color:var(--signal)}
-.wordmark{color:var(--paper);margin-top:clamp(56px,8vw,112px);margin-bottom:clamp(32px,4vw,56px);padding-top:clamp(28px,4vw,48px);border-top:1px solid var(--line);user-select:none}
+.wordmark{color:var(--paper);margin-top:clamp(32px,4vw,48px);margin-bottom:clamp(24px,3vw,32px);padding-top:clamp(24px,3vw,32px);border-top:1px solid var(--line);user-select:none}
 .wordmark svg{display:block;width:100%;height:auto}
 .foot-base{border-top:1px solid var(--line);font-size:12px;color:var(--paper-3)}
 .foot-base .wrap{display:flex;flex-wrap:wrap;gap:10px 28px;justify-content:space-between;padding-block:18px calc(18px + env(safe-area-inset-bottom,0px))}

@@ -1,0 +1,30 @@
+/* The loading screen (Route): brand tokens from Brand Identity · Volume 01. Paired with assets/js/archgen-loader-route.js. */
+.agl {
+  --agl-ice: #E8EDF1; --agl-ink: #0E1317; --agl-surface: #F7FAFB; --agl-slate: #435565;
+  --agl-flare: #D65148; --agl-steel: #738A9A; --agl-icefill: #CCDBE2; --agl-die: #161E24;
+  position: fixed; inset: 0; z-index: 2147483000;
+  display: grid; place-items: center;
+  overflow: hidden;
+  background: var(--agl-ground); color: var(--agl-fg);
+  font-family: "Cascadia Code", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; /* taste-skill-ignore: the brand's only typeface, Brand Identity Book 07 */
+  font-variant-numeric: tabular-nums; font-feature-settings: "calt" 0;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none; -webkit-user-select: none;
+  cursor: default;
+  will-change: transform, opacity, clip-path;
+}
+.agl[data-host="box"] { position: absolute; }
+.agl--ice { --agl-ground: #E8EDF1; --agl-fg: #0E1317; }
+.agl--ink { --agl-ground: #0E1317; --agl-fg: #E8EDF1; }
+.agl svg { display: block; overflow: visible; }
+.agl-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+html.agl-lock, html.agl-lock body { overflow: hidden; }
+
+/* Route: the ground is its own layer, so it can clear while the mark flies to the header */
+.agl[data-kind="route"] { background: transparent; }
+.agl-bg { position: absolute; inset: 0; background: var(--agl-ground); }
+.agl-route { position: relative; }
+.agl-route svg { width: min(62vw, 420px); height: auto; }
+.agl[data-host="box"] .agl-route svg { width: min(42cqw, 380px); }
+@media (prefers-reduced-motion: reduce) { .agl { will-change: auto; } }

@@ -1,6 +1,6 @@
-# Archgen website
+# Archgen Labs website
 
-Site for Archgen: **where AI meets semiconductors**. Three hash-routed pages (Home, Blog, Contact) live in one self-contained `index.html`; each blog post is its own static page under `blog/posts/`. No framework, no runtime dependencies from the network: the font, Three.js and every image are served from this repo.
+Site for Archgen Labs (archgenlabs.com): **the future of compute starts with how we design it**. Three hash-routed pages (Home, Blog, Contact) live in one self-contained `index.html`; each blog post is its own static page under `blog/posts/`. No framework, no runtime dependencies from the network: the font, Three.js and every image are served from this repo.
 
 ## Quick start
 
@@ -20,7 +20,9 @@ The site is static, so it runs on GitHub Pages, Netlify, Vercel, Cloudflare Page
 
 **GitHub Pages:** Settings → Pages → Build and deployment → *Deploy from a branch* → `main` / `/ (root)` → Save. `.nojekyll` stops Jekyll from touching the files. A **private** repo needs a paid GitHub plan (Pro, Team or Enterprise) for Pages; on the free plan, make the repo public first.
 
-**Custom domain (archgen.tech):** add a `CNAME` file containing `archgen.tech`, point DNS at GitHub Pages, and tick *Enforce HTTPS*.
+This repo is published on GitHub Pages from `main`: https://msreeganeshnaik.github.io/archgen-loaders/
+
+**Vercel (archgenlabs.com):** `vercel.json` sends archgen.tech, www.archgen.tech and www.archgenlabs.com to https://archgenlabs.com with a permanent (308) redirect, so every old link lands on the .com.
 
 ## Folder structure
 
@@ -34,7 +36,7 @@ Never edit a generated file by hand. Change its source in `tools/` and rebuild (
 `[gen]` marks generated output; `(local)` marks files that are not committed.
 
 ```
-archgen-website-revamp/
+archgen-loaders/
 │
 ├── index.html                      Home, Blog and Contact in one file (hash routes #home, #blog, #contact); map below
 │
@@ -53,11 +55,13 @@ archgen-website-revamp/
 │       └── fig.css                 card styles (inlined into each post)
 │
 ├── assets/                         ── everything the pages load ──
-│   ├── blog/                       the posts' images, exactly as on archgen.tech (+ lossless .webp twins)
+│   ├── blog/                       the posts' images, exactly as published (+ lossless .webp twins)
+│   ├── css/                        archgen-loader.css (the loading screen), booking.css (the meeting dialog)
+│   ├── js/                         archgen-loader-route.js (the loading screen), booking.js, analytics.js (Clarity, production only)
 │   ├── figures/              [gen] still posters of the 3D figures: <slug>-wide.webp, <slug>-narrow.webp
 │   ├── fonts/                      Cascadia Code (self-hosted woff2, licence in OFL.txt) + local-fonts.js, the file:// fallback
 │   ├── logo/                       the logo set (lockup, mark, app tiles, favicon) and raster icons (512px, apple-touch)
-│   ├── social/                     og-1200x630.png, the card shown when a link is shared
+│   ├── social/                     og-1200x630.png, the card shown when a link is shared ([gen] by tools/social/og.mjs)
 │   └── vendor/                     three.min.js (Three.js r158, trimmed to what the figures use) + its licence
 │
 ├── tools/                          ── sources and build scripts: edit here ──
@@ -78,14 +82,18 @@ archgen-website-revamp/
 │   │   └── three-entry.js          the Three.js classes the trimmed bundle keeps
 │   ├── hairline/
 │   │   └── stack.js                the Home page's 3D chip-stack model (the source of index.html's #hl-figure)
-│   └── logo/
-│       ├── build_logo.py           regenerates the logo SVGs in assets/logo/
-│       └── reference-screenshot.png  the original logo it was traced from
+│   ├── logo/
+│   │   ├── build_logo.py           regenerates the older logo SVGs in assets/logo/
+│   │   └── reference-screenshot.png  the original logo it was traced from
+│   └── social/
+│       ├── og.html                 the share card's layout (words, die, wordmark)
+│       └── og.mjs                  renders it to assets/social/og-1200x630.png
 │
 ├── robots.txt                      crawl rules (search and AI crawlers welcome)
 ├── sitemap.xml                     the URLs to index (post entries [gen] by build_posts.py)
 ├── llms.txt                        a plain-text brief of the company for AI assistants
 ├── .nojekyll                       tells GitHub Pages to serve files as they are
+├── vercel.json                     redirects archgen.tech and www to archgenlabs.com
 ├── package.json                    pins esbuild for the build: npm install once
 ├── package-lock.json               the exact esbuild version installed
 ├── .gitignore                      keeps node_modules/ out of git
@@ -241,18 +249,16 @@ Headless test browsers have no GPU; check motion on real hardware.
 - Keyboard: visible focus rings, a real tablist in the console, figure cards take Space to pause and ←/→ to turn.
 - Figure cards carry a full text description (`aria-label`); decorative canvases are `aria-hidden`.
 
-## Logo
+## Logo and loading screen
 
-`assets/logo/` holds the ARCHGEN AI logo rebuilt as outlined vector paths, measured from `tools/logo/reference-screenshot.png`. To regenerate:
+`assets/logo/archgen-labs-lockup.svg` is the ARCHGEN LABS wordmark from archgenlabs.com, traced to a vector path; the header and footer use the same path inline.
 
-```sh
-pip install skia-python
-cd tools/logo && python3 build_logo.py   # writes out/*.svg; copy into assets/logo/
-```
+The loading screen is **Route**: pin one lights, the AG net routes out of it, then the red pin flies to the header and writes ARCHGEN LABS out of itself (about 2.75 s). It plays once per browser tab, a tap or key skips it, and reduced motion gets the finished logo and a fade. It is `assets/js/archgen-loader-route.js` (first thing in `<body>`) with `assets/css/archgen-loader.css`; it fires `archgen:loaded` on `<body>` when done, and the Home hero waits for that before its reveal.
+
+To make the share card again: `node tools/social/og.mjs` (edit `tools/social/og.html`).
 
 ## Before launch
 
 - [ ] **Forms need a backend.** Contact prepares an email; nothing is stored yet.
-- [ ] **Name:** the logo says *ARCHGEN AI*, while the copy and footer say *Archgen Labs* / *Archgen*. Pick one.
-- [ ] **Turn on GitHub Pages** (see Deploy) and add a `CNAME` for archgen.tech.
+- [x] **Name:** Archgen Labs everywhere: logo, copy, share card.
 

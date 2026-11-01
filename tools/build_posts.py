@@ -125,10 +125,12 @@ for i, slug in enumerate(order):
 <link rel="preload" as="font" type="font/woff2" href="../../assets/fonts/cascadia-code-latin.woff2" crossorigin>
 <link rel="stylesheet" href="../post.css">
 {fig_head}<link rel="stylesheet" href="../../assets/css/booking.css">
+<link rel="stylesheet" href="../../assets/css/archgen-loader.css">
 <script src="../../assets/js/analytics.js" defer></script>
 <script src="../../assets/js/booking.js" defer></script>
 </head>
 <body>
+<script src="../../assets/js/archgen-loader-route.js"></script>
 <header class="bar">
   <div class="wrap bar-in">
     <a class="brand" href="../../index.html#home"><span class="sr-only">Archgen Labs, home. </span>{lockup}</a>
