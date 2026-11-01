@@ -6,6 +6,8 @@ For index.html and every blog/posts/*.html it fails (exit 1) when:
     (a renamed image, font, slug or script); a post with a 3D figure also needs assets/vendor/three.min.js
   - a same-page #link has no element with that id
   - a link to index.html#<route> names a route the site does not have
+  - sitemap.xml lists a URL twice, a URL off https://archgenlabs.com, or a page that does not exist; or a page's
+    canonical tag is not its own archgenlabs.com URL
 External links (http, https, mailto) are not fetched.
 """
 import os, re, sys
@@ -46,6 +48,19 @@ for page in PAGES:
             errors.append(f'{page}: {ref} does not exist')
         elif path.endswith('index.html') and frag and frag not in ROUTES:
             errors.append(f'{page}: {ref} names a route index.html does not have')
+
+# sitemap and canonicals: one host, no repeats, every page real and pointing at itself
+SITE = 'https://archgenlabs.com/'
+locs = re.findall(r'<loc>([^<]+)</loc>', open(os.path.join(ROOT, 'sitemap.xml'), encoding='utf-8').read())
+for loc in sorted({l for l in locs if locs.count(l) > 1}):
+    errors.append(f'sitemap.xml: {loc} is listed {locs.count(loc)} times')
+for loc in locs:
+    if not loc.startswith(SITE): errors.append(f'sitemap.xml: {loc} is not on {SITE}')
+    elif not os.path.exists(os.path.join(ROOT, loc[len(SITE):] or 'index.html')): errors.append(f'sitemap.xml: {loc} has no file')
+for page in PAGES:
+    canon = re.search(r'<link rel="canonical" href="([^"]+)"', open(os.path.join(ROOT, page), encoding='utf-8').read())
+    want = SITE + ('' if page == 'index.html' else page)
+    if not canon or canon.group(1) != want: errors.append(f'{page}: canonical should be {want}')
 
 for e in errors:
     print('check:', e)

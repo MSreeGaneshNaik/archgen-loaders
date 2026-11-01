@@ -194,7 +194,7 @@ print('wrote index.html  blog list, %d posts' % len(order))
 # sitemap.xml: the entries for posts are rewritten from posts.json (date published as lastmod); every other entry is kept
 sm_path = os.path.join(ROOT, 'sitemap.xml')
 sm = open(sm_path, encoding='utf-8').read()
-sm = re.sub(r'\s*<url>\s*<loc>https://archgen\.tech/blog/posts/[^<]*</loc>.*?</url>', '', sm, flags=re.S)
+sm = re.sub(r'\s*<url>\s*<loc>https://[^/<]+/blog/posts/[^<]*</loc>.*?</url>', '', sm, flags=re.S)   # any host, so a domain change never leaves old entries behind
 entries = ''.join(f'\n  <url>\n    <loc>https://archgenlabs.com/blog/posts/{slug}.html</loc>\n    <lastmod>{iso(posts[slug]["date"])}</lastmod>\n  </url>'
                   for slug in order)
 sm = sm.replace('\n</urlset>', entries + '\n</urlset>')
