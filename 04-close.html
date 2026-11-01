@@ -11,8 +11,13 @@
 html,body{margin:0;background:#E8EDF1;color:#0E1317}
 body{font-family:'Cascadia Code',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 ::selection{background:#0E1317;color:#E8EDF1}
-.site{display:block}
+.site{display:block;position:relative;container-type:inline-size}
 .site img{display:block;width:100%;height:auto}
+/* the header logo, live over the screenshot, where archgenlabs.com puts it */
+.brand{position:absolute;left:6.3889cqw;top:3.8889cqw;width:12.797cqw;height:1.9444cqw}
+.brand .patch{position:absolute;inset:-3px;background:#E8EDF1}
+.brand .lockup{position:absolute;inset:0;background:url(assets/wordmark.webp) 0 0/100% 100% no-repeat}
+@media (max-width:600px){.brand{left:4.1026cqw;top:14.359cqw;width:47.251cqw;height:7.1795cqw}}
 .replay{position:fixed;left:16px;bottom:16px;z-index:10;height:44px;padding:0 20px;border:0;border-radius:999px;background:#0E1317;color:#E8EDF1;font:500 14px/1 'Cascadia Code',ui-monospace,monospace;font-feature-settings:"calt" 0;cursor:pointer;transition:transform 100ms ease-out,background-color 150ms ease-out}
 .replay:hover{background:#435565}
 .replay:active{transform:scale(.97)}
@@ -41,7 +46,10 @@ body{font-family:'Cascadia Code',ui-monospace,SFMono-Regular,Menlo,Consolas,mono
 .agl-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 html.agl-lock, html.agl-lock body { overflow: hidden; }
 
-/* Route */
+/* Route: the ground is its own layer, so it can clear while the mark flies to the header */
+.agl[data-kind="route"] { background: transparent; }
+.agl-bg { position: absolute; inset: 0; background: var(--agl-ground); }
+.agl-route { position: relative; }
 .agl-route svg { width: min(62vw, 420px); height: auto; }
 .agl[data-host="box"] .agl-route svg { width: min(42cqw, 380px); }
 
@@ -186,7 +194,7 @@ var AG_MARK = "M202.35 46.42Q201.77 44.94 201.33 43.41Q200.89 41.89 200.59 40.32
     host.insertBefore(el, host.firstChild);
     if (!boxed) doc.documentElement.classList.add("agl-lock");
 
-    var api = def.build(el, H, { reduced: reduced, boxed: boxed });
+    var api = def.build(el, H, { reduced: reduced, boxed: boxed, opts: opts });
     var raf = 0, done = false, paused = false, skipAt = -1, frozen = 0, last = 0, safety = 0;
     var resolveDone;
     var finished = new Promise(function (r) { resolveDone = r; });
@@ -336,7 +344,8 @@ ArchgenLoader.define("close", {
 
 (function () {
   var q = new URLSearchParams(location.search);
-  var o = { reduced: q.get("rm") === "1" ? true : undefined };
+  var o = { reduced: q.get("rm") === "1" ? true : undefined, handoff: q.get("handoff") || undefined };
+  window.__aglOpts = { handoff: o.handoff };
   window.__agl = ArchgenLoader.mount("close", o);
   window.__agl.finished.then(function (d) { window.__aglDone = d; var b = document.querySelector(".replay"); if (b) b.hidden = false; });
 })();
@@ -346,13 +355,14 @@ ArchgenLoader.define("close", {
     <source media="(max-width: 600px)" srcset="assets/site-mobile.webp">
     <img src="assets/site-desktop.webp" alt="The Archgen Labs home page: The future of compute starts with how we design it." width="2880" height="1800">
   </picture>
+  <span class="brand" aria-hidden="true"><i class="patch"></i><span class="lockup"></span></span>
 </main>
 <button class="replay" type="button" hidden>Replay close</button>
 <script>
 document.querySelector(".replay").addEventListener("click", function () {
   var b = this; b.hidden = true;
   window.__aglDone = null;
-  window.__agl = ArchgenLoader.mount("close");
+  window.__agl = ArchgenLoader.mount("close", window.__aglOpts);
   window.__agl.finished.then(function (d) { window.__aglDone = d; b.hidden = false; b.focus({ preventScroll: true }); });
 });
 </script>

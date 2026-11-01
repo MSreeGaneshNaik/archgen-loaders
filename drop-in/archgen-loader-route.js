@@ -98,7 +98,7 @@ var AG_MARK = "M202.35 46.42Q201.77 44.94 201.33 43.41Q200.89 41.89 200.59 40.32
     host.insertBefore(el, host.firstChild);
     if (!boxed) doc.documentElement.classList.add("agl-lock");
 
-    var api = def.build(el, H, { reduced: reduced, boxed: boxed });
+    var api = def.build(el, H, { reduced: reduced, boxed: boxed, opts: opts });
     var raf = 0, done = false, paused = false, skipAt = -1, frozen = 0, last = 0, safety = 0;
     var resolveDone;
     var finished = new Promise(function (r) { resolveDone = r; });
@@ -192,11 +192,20 @@ var AG_MARK = "M202.35 46.42Q201.77 44.94 201.33 43.41Q200.89 41.89 200.59 40.32
 /*
  * Route. Pin one lights, and the Archgen net routes out of it, net by net, the
  * way a router lays copper. The supplied mark is never redrawn: a mask follows
- * each net's centreline and uncovers the real path. Then the page lifts.
+ * each net's centreline and uncovers the real path.
+ * Then it hands off to the header logo, one of three ways (opts.handoff):
+ *   fly      the mark flies up, lands at the wordmark's cap height, and the
+ *            wordmark opens out of it from the centre as the ground clears;
+ *   retract  the net routes back into pin one, the red pin flies to the head
+ *            of the wordmark and the wordmark writes out of it;
+ *   iris     the whole screen closes down into the logo's slot, carrying the
+ *            mark, and the mark crossfades into the wordmark.
+ * With no header logo on screen, the page lifts away instead.
  */
 ArchgenLoader.define("route", {
   theme: "ice",
-  build: function (el, H) {
+  build: function (el, H, ctx) {
+    var opts = (ctx && ctx.opts) || {};
     var id = H.uid("agl-route");
     /* centrelines of the three nets, in mark units (754 × 442) */
     var NETS = [
@@ -208,6 +217,9 @@ ArchgenLoader.define("route", {
     var masks = NETS.map(function (n) {
       return '<path d="' + n.d + '" pathLength="1" fill="none" stroke="#fff" stroke-width="84" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.05 2" stroke-dashoffset="1.05"/>';
     }).join("");
+    var bg = document.createElement("div");
+    bg.className = "agl-bg";
+    el.insertBefore(bg, el.firstChild);
     var wrap = document.createElement("div");
     wrap.className = "agl-route";
     wrap.innerHTML =
@@ -218,12 +230,92 @@ ArchgenLoader.define("route", {
       '<circle cx="234" cy="34" r="34.6" fill="#D65148" style="transform-origin:234px 34px"/>' +
       "</svg>";
     el.appendChild(wrap);
+    var svg = wrap.querySelector("svg");
     var paths = wrap.querySelectorAll("mask path");
     var pin = wrap.querySelector("circle");
 
-    var EXIT = 700, END = 1100;
+    /* The header logo. On archgenlabs.com it is .brand .lockup: the wordmark's
+       letters fill this fraction of its box [left, top, width, height]. */
+    var scope = ctx.boxed ? el.parentNode : document;
+    var sel = typeof opts.target === "string" ? opts.target : ".brand .lockup";
+    var target = opts.target && typeof opts.target === "object" ? opts.target : null;
+    var ink = opts.targetInk || [0.0239, 0.2909, 0.9517, 0.4758];
+    /* the loader mounts before the header is parsed, so look for it each frame until it exists */
+    function find() {
+      if (!target && opts.target !== false) target = scope.querySelector(sel);
+      if (target && !ctx.reduced && !target.__aglHidden) { target.__aglHidden = true; target.style.opacity = "0"; }
+    }
+    find();
+
+    var mode = opts.handoff === "retract" || opts.handoff === "iris" ? opts.handoff : "fly";
+    var FLY = 680, END = 1110;
+    var plan = null;
+
+    function measure() {
+      svg.style.transform = "";
+      var er = el.getBoundingClientRect(), sr = svg.getBoundingClientRect();
+      var k = sr.width / 846, L = sr.left - er.left, T = sr.top - er.top;
+      var from = { x: L + 46 * k, y: T + 46 * k, h: 442 * k };
+      var to = null, box = null;
+      if (target) {
+        var tr = target.getBoundingClientRect();
+        if (tr.width > 0 && tr.bottom > er.top && tr.top < er.bottom && tr.right > er.left && tr.left < er.right) {
+          var ih = ink[3] * tr.height, iw = ink[2] * tr.width;
+          var w = (ih * 754) / 442;
+          box = { x: tr.left - er.left + ink[0] * tr.width, y: tr.top - er.top + ink[1] * tr.height, w: iw, h: ih };
+          to = { x: box.x + iw / 2 - w / 2, y: box.y, h: ih };
+        }
+      }
+      return { L: L, T: T, k: k, W: er.width, H: er.height, from: from, to: to, box: box };
+    }
+
+    /* move the mark's box part of the way (f, 0 to 1) from where it sat to the wordmark */
+    function place(f) {
+      f = Math.min(1, f);
+      var a = plan.from, b = plan.to;
+      var x = H.lerp(a.x, b.x, f), y = H.lerp(a.y, b.y, f), h = H.lerp(a.h, b.h, f);
+      var sc = h / a.h;
+      var tx = x - plan.L - sc * (a.x - plan.L), ty = y - plan.T - sc * (a.y - plan.T);
+      svg.style.transformOrigin = "0 0";
+      svg.style.transform = "translate3d(" + tx.toFixed(2) + "px," + ty.toFixed(2) + "px,0) scale(" + sc.toFixed(5) + ")";
+    }
+
+    /* retract: the nets route back the way they came, into pin one; the pin flies
+       to the head of the wordmark, and the wordmark writes out of it */
+    function retract(t) {
+      var q = H.seg(t, FLY, 170, H.ease.in);
+      for (var i = 0; i < paths.length; i++) paths[i].style.strokeDashoffset = (1.35 * q).toFixed(4);
+      var bx = plan.box, k = plan.k, rT = bx.h * 0.34;
+      var px = plan.L + 280 * k, py = plan.T + 80 * k, r0 = 34.6 * k;   /* pin one, untransformed */
+      var f = Math.min(1, H.spring(t - 830, 1, 0.24) / H.spring(180, 1, 0.24));
+      if (t < 830) f = 0;
+      var cx = H.lerp(px, bx.x - rT - 4, f), cy = H.lerp(py, bx.y + bx.h / 2, f), sc = H.lerp(1, rT / r0, f);
+      var tx = cx - plan.L - sc * (px - plan.L), ty = cy - plan.T - sc * (py - plan.T);
+      svg.style.transformOrigin = "0 0";
+      svg.style.transform = "translate3d(" + tx.toFixed(2) + "px," + ty.toFixed(2) + "px,0) scale(" + sc.toFixed(5) + ")";
+      bg.style.opacity = String(1 - H.seg(t, 760, 240, H.ease.std));
+      var r = H.seg(t, 985, 115, H.ease.out);
+      target.style.opacity = r > 0 ? "1" : "0";
+      target.style.clipPath = r < 1 ? "inset(0 " + (100 * (1 - r)).toFixed(2) + "% 0 0)" : "";
+      svg.style.opacity = String(1 - H.seg(t, 1040, 60));
+    }
+
+    /* iris: the screen closes down into the logo's slot, carrying the mark,
+       and the mark crossfades into the wordmark */
+    function iris(t) {
+      var f = Math.min(1, H.spring(t - FLY, 1, 0.3) / H.spring(320, 1, 0.3));
+      place(f);
+      var bx = plan.box, pad = 6;
+      var top = H.lerp(0, bx.y - pad, f), left = H.lerp(0, bx.x - pad, f);
+      var right = H.lerp(0, plan.W - (bx.x + bx.w + pad), f), bottom = H.lerp(0, plan.H - (bx.y + bx.h + pad), f);
+      el.style.clipPath = "inset(" + top.toFixed(1) + "px " + right.toFixed(1) + "px " + bottom.toFixed(1) + "px " + left.toFixed(1) + "px round " + (6 * f).toFixed(1) + "px)";
+      target.style.opacity = t >= 990 ? "1" : "0";
+      target.style.clipPath = "";
+      el.style.opacity = String(1 - H.seg(t, 990, 80, H.ease.std));
+    }
+
     return {
-      exitAt: EXIT,
+      exitAt: FLY,
       end: END,
       render: function (t) {
         var s = H.spring(t, 1, 0.26);
@@ -233,15 +325,45 @@ ArchgenLoader.define("route", {
           var p = H.seg(t, NETS[i].at, NETS[i].dur, H.ease.inOut);
           paths[i].style.strokeDashoffset = (1.05 * (1 - p)).toFixed(4);
         }
-        /* the page is under the loader: lift it off, faster than it arrived */
-        var e = H.seg(t, EXIT, END - EXIT, H.ease.in);
-        el.style.transform = e > 0 ? "translate3d(0," + (-100 * e).toFixed(3) + "%,0)" : "";
+        find();
+        if (t < FLY) {
+          plan = null;
+          svg.style.transform = ""; svg.style.opacity = ""; bg.style.opacity = "";
+          el.style.transform = ""; el.style.clipPath = ""; el.style.opacity = "";
+          return;
+        }
+        if (!plan) plan = measure();
+
+        if (!plan.to) {
+          /* no header logo in view: lift the page off instead */
+          var e = H.seg(t, FLY, END - FLY, H.ease.in);
+          el.style.transform = "translate3d(0," + (-100 * e).toFixed(3) + "%,0)";
+          return;
+        }
+
+        if (mode === "retract") return retract(t);
+        if (mode === "iris") return iris(t);
+
+        /* fly: a critically damped spring, normalised so the mark is exactly home at 280ms */
+        place(H.spring(t - FLY, 1, 0.26) / H.spring(280, 1, 0.26));
+        bg.style.opacity = String(1 - H.seg(t, FLY + 60, 240, H.ease.std));
+        /* the wordmark opens out from the mark's centre as the mark goes */
+        var r = H.seg(t, 955, 140, H.ease.out);
+        target.style.opacity = r > 0 ? "1" : "0";
+        var c = (50 * (1 - r)).toFixed(2) + "%";
+        target.style.clipPath = r < 1 ? "inset(0 " + c + " 0 " + c + ")" : "";
+        svg.style.opacity = String(1 - H.seg(t, 965, 60));
+      },
+      destroy: function () {
+        if (target) { target.style.opacity = ""; target.style.clipPath = ""; target.__aglHidden = false; }
       }
     };
   }
 });
 
 (function () {
+  var tag = document.currentScript, o = {};
+  if (tag && tag.dataset.handoff) o.handoff = tag.dataset.handoff;
   try { if (sessionStorage.getItem("agl-seen")) return; sessionStorage.setItem("agl-seen", "1"); } catch (e) {}
-  ArchgenLoader.mount("route");
+  ArchgenLoader.mount("route", o);
 })();

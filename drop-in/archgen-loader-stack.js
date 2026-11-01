@@ -98,7 +98,7 @@ var AG_MARK = "M202.35 46.42Q201.77 44.94 201.33 43.41Q200.89 41.89 200.59 40.32
     host.insertBefore(el, host.firstChild);
     if (!boxed) doc.documentElement.classList.add("agl-lock");
 
-    var api = def.build(el, H, { reduced: reduced, boxed: boxed });
+    var api = def.build(el, H, { reduced: reduced, boxed: boxed, opts: opts });
     var raf = 0, done = false, paused = false, skipAt = -1, frozen = 0, last = 0, safety = 0;
     var resolveDone;
     var finished = new Promise(function (r) { resolveDone = r; });
@@ -1133,6 +1133,8 @@ ArchgenLoader.define("stack", {
 });
 
 (function () {
+  var tag = document.currentScript, o = {};
+  if (tag && tag.dataset.handoff) o.handoff = tag.dataset.handoff;
   try { if (sessionStorage.getItem("agl-seen")) return; sessionStorage.setItem("agl-seen", "1"); } catch (e) {}
-  ArchgenLoader.mount("stack");
+  ArchgenLoader.mount("stack", o);
 })();
