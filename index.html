@@ -790,10 +790,10 @@ a[data-email],.li-v[data-email]{cursor:copy}
   .frag-body{grid-template-columns:minmax(0,1fr) 112px;column-gap:12px;
     grid-template-areas:"die met" "leg leg" "foot foot" "mem mem" "tabs tabs" "pane pane"}
   .frag-left>div:first-child{grid-area:die;padding:12px 0 0 12px}
-  .die{aspect-ratio:1;padding:7px;gap:3px}
+  .die{aspect-ratio:4/3;padding:7px;gap:3px}   /* a compact card on phones: the die is wider than tall */
   .blk{font-size:10.5px;padding:3px 2px;letter-spacing:-.02em}
   .metrics{grid-area:met;grid-template-columns:minmax(0,1fr);align-content:start;margin:12px 12px 0 0;border-bottom:0}
-  .metric,.metric:nth-child(2n){padding:7px 0 7px 10px;border-right:0;border-left:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .metric,.metric:nth-child(2n){padding:5px 0 5px 10px;border-right:0;border-left:1px solid var(--line);border-bottom:1px solid var(--line)}
   .metric:last-child{border-bottom:0}
   .metric dd{font-size:14px}
   .legend{grid-area:leg;padding:10px 12px 0}
@@ -804,7 +804,7 @@ a[data-email],.li-v[data-email]{cursor:copy}
   .mem li{padding:3px 8px}
   .mem li:nth-child(n+2){display:none}
   .ftabs{grid-area:tabs;border-top:1px solid var(--line)}
-  .fpane{grid-area:pane;min-height:232px}
+  .fpane{grid-area:pane;min-height:0;height:184px;contain:size;overflow:hidden auto;scrollbar-width:thin;overscroll-behavior:contain}
   .fpane>[role="tabpanel"]{padding:10px 12px 12px}
   .flog{font-size:11.5px;line-height:1.62}
   .flog .ln{grid-template-columns:minmax(0,1fr)}
