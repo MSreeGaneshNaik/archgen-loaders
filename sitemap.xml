@@ -1,25 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://archgen.tech/</loc>
+    <loc>https://archgenlabs.com/</loc>
   </url>
   <url>
-    <loc>https://archgen.tech/llms.txt</loc>
+    <loc>https://archgenlabs.com/llms.txt</loc>
   </url>
   <url>
-    <loc>https://archgen.tech/blog/posts/how-we-ranked-first-in-the-partcl.html</loc>
+    <loc>https://archgenlabs.com/blog/posts/how-we-ranked-first-in-the-partcl.html</loc>
     <lastmod>2026-06-20</lastmod>
   </url>
   <url>
-    <loc>https://archgen.tech/blog/posts/why-chip-design-takes-18-months.html</loc>
+    <loc>https://archgenlabs.com/blog/posts/why-chip-design-takes-18-months.html</loc>
     <lastmod>2026-04-06</lastmod>
   </url>
   <url>
-    <loc>https://archgen.tech/blog/posts/cognitive-agents-next-era-silicon.html</loc>
+    <loc>https://archgenlabs.com/blog/posts/cognitive-agents-next-era-silicon.html</loc>
     <lastmod>2026-02-20</lastmod>
   </url>
   <url>
-    <loc>https://archgen.tech/blog/posts/disrupting-semiconductor-ai-agents.html</loc>
+    <loc>https://archgenlabs.com/blog/posts/disrupting-semiconductor-ai-agents.html</loc>
+    <lastmod>2025-12-17</lastmod>
+  </url>
+  <url>
+    <loc>https://archgenlabs.com/blog/posts/how-we-ranked-first-in-the-partcl.html</loc>
+    <lastmod>2026-06-20</lastmod>
+  </url>
+  <url>
+    <loc>https://archgenlabs.com/blog/posts/why-chip-design-takes-18-months.html</loc>
+    <lastmod>2026-04-06</lastmod>
+  </url>
+  <url>
+    <loc>https://archgenlabs.com/blog/posts/cognitive-agents-next-era-silicon.html</loc>
+    <lastmod>2026-02-20</lastmod>
+  </url>
+  <url>
+    <loc>https://archgenlabs.com/blog/posts/disrupting-semiconductor-ai-agents.html</loc>
     <lastmod>2025-12-17</lastmod>
   </url>
 </urlset>

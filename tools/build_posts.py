@@ -74,14 +74,14 @@ for i, slug in enumerate(order):
     newer = posts[order[i - 1]] if i > 0 else None
     older = posts[order[i + 1]] if i + 1 < len(order) else None
     authors = [a.strip() for a in p['authors'].split('&')]
-    url = f'https://archgen.tech/blog/posts/{slug}.html'
+    url = f'https://archgenlabs.com/blog/posts/{slug}.html'
     ld = {
         '@context': 'https://schema.org', '@type': 'BlogPosting', 'headline': p['title'], 'description': p['desc'],
         'datePublished': iso(p['date']), 'url': url, 'mainEntityOfPage': url,
         'author': [{'@type': 'Person', 'name': a} for a in authors],
-        'publisher': {'@type': 'Organization', 'name': 'Archgen Labs', 'url': 'https://archgen.tech/',
-                      'logo': {'@type': 'ImageObject', 'url': 'https://archgen.tech/assets/logo/archgen-ai-icon-512.png'}},
-        'image': 'https://archgen.tech/assets/social/og-1200x630.png',
+        'publisher': {'@type': 'Organization', 'name': 'Archgen Labs', 'url': 'https://archgenlabs.com/',
+                      'logo': {'@type': 'ImageObject', 'url': 'https://archgenlabs.com/assets/logo/archgen-ai-icon-512.png'}},
+        'image': 'https://archgenlabs.com/assets/social/og-1200x630.png',
     }
     more = []
     if newer: more.append(f'<a class="prev" href="{newer["slug"]}.html"><span class="dir">← Newer</span><span class="t">{e(newer["title"])}</span></a>')
@@ -117,7 +117,7 @@ for i, slug in enumerate(order):
 <meta property="og:url" content="{url}">
 <meta property="og:title" content="{e(p['title'])}">
 <meta property="og:description" content="{e(p['desc'])}">
-<meta property="og:image" content="https://archgen.tech/assets/social/og-1200x630.png">
+<meta property="og:image" content="https://archgenlabs.com/assets/social/og-1200x630.png">
 <meta property="article:published_time" content="{iso(p['date'])}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@archgen_">
@@ -186,7 +186,7 @@ print('wrote index.html  blog list, %d posts' % len(order))
 sm_path = os.path.join(ROOT, 'sitemap.xml')
 sm = open(sm_path, encoding='utf-8').read()
 sm = re.sub(r'\s*<url>\s*<loc>https://archgen\.tech/blog/posts/[^<]*</loc>.*?</url>', '', sm, flags=re.S)
-entries = ''.join(f'\n  <url>\n    <loc>https://archgen.tech/blog/posts/{slug}.html</loc>\n    <lastmod>{iso(posts[slug]["date"])}</lastmod>\n  </url>'
+entries = ''.join(f'\n  <url>\n    <loc>https://archgenlabs.com/blog/posts/{slug}.html</loc>\n    <lastmod>{iso(posts[slug]["date"])}</lastmod>\n  </url>'
                   for slug in order)
 sm = sm.replace('\n</urlset>', entries + '\n</urlset>')
 open(sm_path, 'w', encoding='utf-8').write(sm)

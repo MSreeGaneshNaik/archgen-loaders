@@ -1,0 +1,7 @@
+{
+  "redirects": [
+    { "source": "/:path*", "has": [{ "type": "host", "value": "archgen.tech" }], "destination": "https://archgenlabs.com/:path*", "permanent": true },
+    { "source": "/:path*", "has": [{ "type": "host", "value": "www.archgen.tech" }], "destination": "https://archgenlabs.com/:path*", "permanent": true },
+    { "source": "/:path*", "has": [{ "type": "host", "value": "www.archgenlabs.com" }], "destination": "https://archgenlabs.com/:path*", "permanent": true }
+  ]
+}

@@ -10,20 +10,20 @@
 - Built for 2D and 3D-stacked chips. Stacked dies share timing, power and heat across tiers, while most physical design tools still treat each die as a separate flat chip.
 
 ## Proof
-- Ranked #1 on the IBM macro-placement benchmarks in the HRT × Partcl macro placement challenge: https://archgen.tech/blog/posts/how-we-ranked-first-in-the-partcl.html
+- Ranked #1 on the IBM macro-placement benchmarks in the HRT × Partcl macro placement challenge: https://archgenlabs.com/blog/posts/how-we-ranked-first-in-the-partcl.html
 
 ## Writing
-- Rank #1 on the IBM macro-placement benchmarks (Jun 20, 2026): https://archgen.tech/blog/posts/how-we-ranked-first-in-the-partcl.html
-- 18 months per chip. Where does the time go? (Apr 6, 2026): https://archgen.tech/blog/posts/why-chip-design-takes-18-months.html
-- Context, feedback, memory: cognitive agents for the next era of silicon (Feb 20, 2026): https://archgen.tech/blog/posts/cognitive-agents-next-era-silicon.html
-- Less magic. More context: on disrupting the semiconductor industry with AI agents (Dec 17, 2025): https://archgen.tech/blog/posts/disrupting-semiconductor-ai-agents.html
+- Rank #1 on the IBM macro-placement benchmarks (Jun 20, 2026): https://archgenlabs.com/blog/posts/how-we-ranked-first-in-the-partcl.html
+- 18 months per chip. Where does the time go? (Apr 6, 2026): https://archgenlabs.com/blog/posts/why-chip-design-takes-18-months.html
+- Context, feedback, memory: cognitive agents for the next era of silicon (Feb 20, 2026): https://archgenlabs.com/blog/posts/cognitive-agents-next-era-silicon.html
+- Less magic. More context: on disrupting the semiconductor industry with AI agents (Dec 17, 2025): https://archgenlabs.com/blog/posts/disrupting-semiconductor-ai-agents.html
 
 ## People
 - Hariharan Ayappane, founder: hari@archgen.tech, https://www.linkedin.com/in/hariharan-ayappane/
 - Naveen Venkat, founder: naveen@archgen.tech, https://www.linkedin.com/in/naveenvenkat17/
 
 ## Links
-- Website: https://archgen.tech/
+- Website: https://archgenlabs.com/
 - X: https://x.com/archgen_
 - GitHub: https://github.com/archgen-ai
 - LinkedIn: https://www.linkedin.com/company/archgen-ai

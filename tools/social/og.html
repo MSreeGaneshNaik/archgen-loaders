@@ -1,0 +1,59 @@
+<!doctype html>
+<!-- The link-preview card (1200×630). Edit the words or the die here, then render it:
+     node tools/social/og.mjs   →   assets/social/og-1200x630.png
+     Everything is set large enough to read in a small link preview: nothing under 22px. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face{font-family:'Cascadia Code';font-weight:200 700;src:url(../../assets/fonts/cascadia-code-latin.woff2) format('woff2')}
+:root{--ink:#E8EDF1;--paper:#0E1317;--paper-2:#3B4651;--steel:#738A9A;--slate:#435565;--flare:#D65148;--on-slate:#EEF3F6;--yc:#F26522}
+*{box-sizing:border-box}
+html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:var(--ink);color:var(--paper);font-family:'Cascadia Code',ui-monospace,monospace}
+.card{position:relative;width:1200px;height:630px;display:grid;grid-template-columns:690px 510px}
+.copy{padding:64px 0 56px 72px;display:flex;flex-direction:column}
+.mark{height:30px;width:auto;align-self:flex-start;color:var(--paper);display:block}
+h1{margin:56px 24px 0 0;font-size:52px;line-height:1.1;font-weight:600;letter-spacing:-.02em}
+.pitch{margin:28px 0 0;font-size:24px;line-height:1.45;color:var(--paper-2);max-width:30ch}
+.yc{margin-top:auto;display:flex;align-items:center;gap:12px;font-size:22px}
+.yc i{font-style:normal;display:grid;place-items:center;width:32px;height:32px;border-radius:4px;background:var(--yc);color:#fff;font-weight:700;font-size:20px}
+.stage{position:relative;background:var(--steel);clip-path:polygon(64px 0,100% 0,100% 100%,0 100%,0 64px);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:36px;padding:56px 48px}
+.die{width:380px;aspect-ratio:1;background:#F4F7F9;border-radius:6px;padding:14px;display:grid;gap:8px;
+  grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(6,1fr);
+  grid-template-areas:"s0 c0 c1 n" "s0 c0 c1 n" "s0 c0 c1 n" "s1 c2 c3 n" "s1 c2 c3 p" "s1 c2 c3 p";
+  box-shadow:0 0 0 1px rgba(14,19,23,.12),0 24px 60px rgba(14,19,23,.25);position:relative}
+.die::before{content:"";position:absolute;left:0;top:0;border-style:solid;border-width:22px 22px 0 0;border-color:var(--paper) transparent transparent transparent}
+.b{position:relative;text-shadow:0 0 3px #F4F7F9,0 0 6px #F4F7F9;border:1px solid rgba(14,19,23,.18);border-radius:2px;display:flex;align-items:flex-end;padding:6px 7px;font-size:14px;color:var(--paper-2)}
+.sram{background-color:#E6ECEF;background-image:repeating-linear-gradient(0deg,rgba(14,19,23,.16) 0 1px,transparent 1px 6px),repeating-linear-gradient(90deg,rgba(14,19,23,.16) 0 1px,transparent 1px 6px)}
+.cpu{text-shadow:none;background-color:var(--slate);background-image:radial-gradient(circle,var(--flare) 0 2.4px,transparent 3px);background-size:14px 14px;background-position:6px 7px;background-repeat:repeat-x;color:var(--on-slate)}
+.cpu.hot{box-shadow:inset 0 0 0 2px var(--flare)}
+.npu{background-color:#DCE4E9;align-items:flex-end;background-image:radial-gradient(rgba(14,19,23,.5) 1.2px,transparent 1.6px);background-size:8px 8px}
+.phy{background-color:#E1E7E4;background-image:repeating-linear-gradient(90deg,rgba(104,119,114,.95) 0 3px,transparent 3px 7px)}
+.url{font-size:28px;font-weight:500;color:var(--on-slate);letter-spacing:.01em}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="copy">
+    <svg class="mark" id="mark" viewBox="0 0 2066 156" aria-label="Archgen Labs"></svg>
+    <h1>The future of compute starts with how we design it.</h1>
+    <p class="pitch">An AI agent for chip physical design, from a single die to a 3D stack.</p>
+    <div class="yc">Backed by <i>Y</i> Combinator</div>
+  </div>
+  <div class="stage">
+    <div class="die">
+      <div class="b sram" style="grid-area:s0">SRAM0</div><div class="b cpu" style="grid-area:c0">CORE0</div><div class="b cpu" style="grid-area:c1">CORE1</div><div class="b npu" style="grid-area:n">NPU</div>
+      <div class="b sram" style="grid-area:s1">SRAM1</div><div class="b cpu hot" style="grid-area:c2">CORE2</div><div class="b cpu" style="grid-area:c3">CORE3</div><div class="b phy" style="grid-area:p">PHY</div>
+    </div>
+    <div class="url">archgenlabs.com</div>
+  </div>
+</div>
+<script>
+  // the wordmark is the site's own vector file, so the card and the site never drift apart
+  fetch('../../assets/logo/archgen-labs-lockup.svg').then(r => r.text()).then(t => {
+    document.getElementById('mark').innerHTML = t.match(/<path[^>]*\/>/)[0].replace(/fill="[^"]*"/, 'fill="currentColor"');
+    document.body.dataset.ready = '1';
+  });
+</script>
+</body>
+</html>

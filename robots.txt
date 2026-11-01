@@ -24,4 +24,4 @@ Allow: /
 User-agent: Applebot-Extended
 Allow: /
 
-Sitemap: https://archgen.tech/sitemap.xml
+Sitemap: https://archgenlabs.com/sitemap.xml
