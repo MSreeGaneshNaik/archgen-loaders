@@ -288,27 +288,26 @@ var AG_MARK = "M202.35 46.42Q201.77 44.94 201.33 43.41Q200.89 41.89 200.59 40.32
 /*
  * Route. Pin one lights, and the Archgen net routes out of it, net by net, the
  * way a router lays copper. The supplied mark is never redrawn: a mask follows
- * each net's centreline and uncovers the real path.
- * Then it hands off to the header logo, one of three ways (opts.handoff):
- *   fly      the mark flies up, lands at the wordmark's cap height, and the
- *            wordmark opens out of it from the centre as the ground clears;
- *   retract  the net routes back into pin one, the red pin flies to the head
- *            of the wordmark and the wordmark writes out of it;
- *   iris     the whole screen closes down into the logo's slot, carrying the
- *            mark, and the mark crossfades into the wordmark.
- * With no header logo on screen, the page lifts away instead.
+ * each net's centreline and uncovers the real path. The finished logo holds
+ * for a beat. Then it hands off to the header logo (opts.handoff):
+ *   retract  (default) the nets route back into pin one, last laid first out;
+ *            the red pin rises on an arc to the head of the wordmark, and
+ *            writes ARCHGEN LABS out of itself as it runs to the end;
+ *   fly      the mark flies up and the wordmark opens out of it;
+ *   iris     the screen closes down into the logo's slot, carrying the mark.
+ * Gone by 1.96s after mount. With no header logo on screen, the page lifts away.
  */
 ArchgenLoader.define("route", {
   theme: "ice",
   build: function (el, H, ctx) {
     var opts = (ctx && ctx.opts) || {};
     var id = H.uid("agl-route");
-    /* centrelines of the three nets, in mark units (754 × 442) */
+    /* centrelines of the three nets, in mark units (754 × 442); out = when it retracts */
     var NETS = [
-      { d: "M234 34L639 34", at: 120, dur: 300 },
-      { d: "M234 34L34 324", at: 120, dur: 300 },
-      { d: "M702 122L355.9 122L325.9 174L450 389L714 389L714 246L597 246", at: 180, dur: 440 },
-      { d: "M222 258L308.6 408", at: 300, dur: 220 }
+      { d: "M234 34L639 34", at: 200, dur: 460, out: 1180 },
+      { d: "M234 34L34 324", at: 200, dur: 460, out: 1180 },
+      { d: "M702 122L355.9 122L325.9 174L450 389L714 389L714 246L597 246", at: 300, dur: 640, out: 1130 },
+      { d: "M222 258L308.6 408", at: 480, dur: 340, out: 1100 }
     ];
     var masks = NETS.map(function (n) {
       return '<path d="' + n.d + '" pathLength="1" fill="none" stroke="#fff" stroke-width="84" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.05 2" stroke-dashoffset="1.05"/>';
@@ -343,9 +342,12 @@ ArchgenLoader.define("route", {
     }
     find();
 
-    var mode = opts.handoff === "retract" || opts.handoff === "iris" ? opts.handoff : "fly";
-    var FLY = 680, END = 1110;
+    var mode = opts.handoff === "fly" || opts.handoff === "iris" ? opts.handoff : "retract";
+    var EXIT = 1100;                         /* the logo is whole and has been read */
+    var END = mode === "retract" ? 1960 : 1530;
+    var SHIFT = EXIT - 680;                  /* fly and iris keep their tested timing, later */
     var plan = null;
+    var LIFT = H.bezier(0.55, 0, 0.15, 1);
 
     function measure() {
       svg.style.transform = "";
@@ -365,41 +367,59 @@ ArchgenLoader.define("route", {
       return { L: L, T: T, k: k, W: er.width, H: er.height, from: from, to: to, box: box };
     }
 
-    /* move the mark's box part of the way (f, 0 to 1) from where it sat to the wordmark */
+    /* the svg is scaled about its own top-left corner; put a point of it at (x, y) at scale sc */
+    function pose(px, py, x, y, sc) {
+      var tx = x - plan.L - sc * (px - plan.L), ty = y - plan.T - sc * (py - plan.T);
+      svg.style.transformOrigin = "0 0";
+      svg.style.transform = "translate3d(" + tx.toFixed(2) + "px," + ty.toFixed(2) + "px,0) scale(" + sc.toFixed(5) + ")";
+    }
+
+    /* retract: last laid, first out; the pin rises on an arc, then writes the name */
+    function retract(t) {
+      for (var i = 0; i < paths.length; i++) {
+        paths[i].style.strokeDashoffset = (1.35 * H.seg(t, NETS[i].out, 300, H.ease.inOut)).toFixed(4);
+      }
+      var bx = plan.box, k = plan.k;
+      var px = plan.L + 280 * k, py = plan.T + 80 * k, r0 = 34.6 * k;   /* pin one, untransformed */
+      var rT = bx.h * 0.34, ex = bx.x, ey = bx.y + bx.h / 2;              /* where it lands: the head of the name */
+      /* the flight: 420ms along a rising arc, lifted gently and set down softly */
+      var f = H.seg(t, 1290, 420, LIFT);
+      var cx = H.lerp(px, ex, 0.2), cy = H.lerp(py, ey, 0.9);
+      var u = 1 - f;
+      var x = u * u * px + 2 * u * f * cx + f * f * ex;
+      var y = u * u * py + 2 * u * f * cy + f * f * ey;
+      var sc = H.lerp(1, rT / r0, f);
+      /* the write: the pin runs to the end of the name, and the name appears behind it */
+      var w = H.seg(t, 1690, 220, H.ease.inOut);
+      x += w * bx.w;
+      pose(px, py, x, y, sc * (1 - 0.6 * H.seg(t, 1895, 60, H.ease.std)));
+      bg.style.opacity = String(1 - H.seg(t, 1200, 400, H.ease.std));
+      target.style.opacity = t >= 1690 ? "1" : "0";
+      target.style.clipPath = w < 1 ? "inset(0 " + (100 * (1 - w)).toFixed(2) + "% 0 0)" : "";
+      svg.style.opacity = String(1 - H.seg(t, 1895, 60, H.ease.std));
+    }
+
     function place(f) {
       f = Math.min(1, f);
       var a = plan.from, b = plan.to;
-      var x = H.lerp(a.x, b.x, f), y = H.lerp(a.y, b.y, f), h = H.lerp(a.h, b.h, f);
-      var sc = h / a.h;
-      var tx = x - plan.L - sc * (a.x - plan.L), ty = y - plan.T - sc * (a.y - plan.T);
-      svg.style.transformOrigin = "0 0";
-      svg.style.transform = "translate3d(" + tx.toFixed(2) + "px," + ty.toFixed(2) + "px,0) scale(" + sc.toFixed(5) + ")";
+      var h = H.lerp(a.h, b.h, f);
+      pose(a.x, a.y, H.lerp(a.x, b.x, f), H.lerp(a.y, b.y, f), h / a.h);
     }
 
-    /* retract: the nets route back the way they came, into pin one; the pin flies
-       to the head of the wordmark, and the wordmark writes out of it */
-    function retract(t) {
-      var q = H.seg(t, FLY, 170, H.ease.in);
-      for (var i = 0; i < paths.length; i++) paths[i].style.strokeDashoffset = (1.35 * q).toFixed(4);
-      var bx = plan.box, k = plan.k, rT = bx.h * 0.34;
-      var px = plan.L + 280 * k, py = plan.T + 80 * k, r0 = 34.6 * k;   /* pin one, untransformed */
-      var f = Math.min(1, H.spring(t - 830, 1, 0.24) / H.spring(180, 1, 0.24));
-      if (t < 830) f = 0;
-      var cx = H.lerp(px, bx.x - rT - 4, f), cy = H.lerp(py, bx.y + bx.h / 2, f), sc = H.lerp(1, rT / r0, f);
-      var tx = cx - plan.L - sc * (px - plan.L), ty = cy - plan.T - sc * (py - plan.T);
-      svg.style.transformOrigin = "0 0";
-      svg.style.transform = "translate3d(" + tx.toFixed(2) + "px," + ty.toFixed(2) + "px,0) scale(" + sc.toFixed(5) + ")";
-      bg.style.opacity = String(1 - H.seg(t, 760, 240, H.ease.std));
-      var r = H.seg(t, 985, 115, H.ease.out);
+    /* fly: the mark flies up and the wordmark opens out of it from the centre */
+    function fly(t) {
+      place(H.spring(t - 680, 1, 0.26) / H.spring(280, 1, 0.26));
+      bg.style.opacity = String(1 - H.seg(t, 740, 240, H.ease.std));
+      var r = H.seg(t, 955, 140, H.ease.out);
       target.style.opacity = r > 0 ? "1" : "0";
-      target.style.clipPath = r < 1 ? "inset(0 " + (100 * (1 - r)).toFixed(2) + "% 0 0)" : "";
-      svg.style.opacity = String(1 - H.seg(t, 1040, 60));
+      var c = (50 * (1 - r)).toFixed(2) + "%";
+      target.style.clipPath = r < 1 ? "inset(0 " + c + " 0 " + c + ")" : "";
+      svg.style.opacity = String(1 - H.seg(t, 965, 60));
     }
 
-    /* iris: the screen closes down into the logo's slot, carrying the mark,
-       and the mark crossfades into the wordmark */
+    /* iris: the screen closes down into the logo's slot, carrying the mark */
     function iris(t) {
-      var f = Math.min(1, H.spring(t - FLY, 1, 0.3) / H.spring(320, 1, 0.3));
+      var f = Math.min(1, H.spring(t - 680, 1, 0.3) / H.spring(320, 1, 0.3));
       place(f);
       var bx = plan.box, pad = 6;
       var top = H.lerp(0, bx.y - pad, f), left = H.lerp(0, bx.x - pad, f);
@@ -411,18 +431,18 @@ ArchgenLoader.define("route", {
     }
 
     return {
-      exitAt: FLY,
+      exitAt: EXIT,
       end: END,
       render: function (t) {
-        var s = H.spring(t, 1, 0.26);
+        var s = H.spring(t, 1, 0.32);
         pin.style.transform = "scale(" + (0.25 + 0.75 * s).toFixed(4) + ")";
-        pin.style.opacity = String(H.seg(t, 0, 60));
+        pin.style.opacity = String(H.seg(t, 0, 80));
         for (var i = 0; i < NETS.length; i++) {
           var p = H.seg(t, NETS[i].at, NETS[i].dur, H.ease.inOut);
           paths[i].style.strokeDashoffset = (1.05 * (1 - p)).toFixed(4);
         }
         find();
-        if (t < FLY) {
+        if (t < EXIT) {
           plan = null;
           svg.style.transform = ""; svg.style.opacity = ""; bg.style.opacity = "";
           el.style.transform = ""; el.style.clipPath = ""; el.style.opacity = "";
@@ -431,24 +451,14 @@ ArchgenLoader.define("route", {
         if (!plan) plan = measure();
 
         if (!plan.to) {
-          /* no header logo in view: lift the page off instead */
-          var e = H.seg(t, FLY, END - FLY, H.ease.in);
+          /* no header logo in view: hold, then lift the page off */
+          var e = H.seg(t, END - 460, 460, H.ease.in);
           el.style.transform = "translate3d(0," + (-100 * e).toFixed(3) + "%,0)";
           return;
         }
-
         if (mode === "retract") return retract(t);
-        if (mode === "iris") return iris(t);
-
-        /* fly: a critically damped spring, normalised so the mark is exactly home at 280ms */
-        place(H.spring(t - FLY, 1, 0.26) / H.spring(280, 1, 0.26));
-        bg.style.opacity = String(1 - H.seg(t, FLY + 60, 240, H.ease.std));
-        /* the wordmark opens out from the mark's centre as the mark goes */
-        var r = H.seg(t, 955, 140, H.ease.out);
-        target.style.opacity = r > 0 ? "1" : "0";
-        var c = (50 * (1 - r)).toFixed(2) + "%";
-        target.style.clipPath = r < 1 ? "inset(0 " + c + " 0 " + c + ")" : "";
-        svg.style.opacity = String(1 - H.seg(t, 965, 60));
+        if (mode === "iris") return iris(t - SHIFT);
+        return fly(t - SHIFT);
       },
       destroy: function () {
         if (target) { target.style.opacity = ""; target.style.clipPath = ""; target.__aglHidden = false; }
