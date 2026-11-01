@@ -1,5 +1,52 @@
 # Changelog
 
+## Live-site sync, feedback round, phone polish and fixes (Nov 1)
+The repo now matches what is live on archgenlabs.com (which had been edited directly on Vercel), plus the 15-point feedback round and a pass of phone refinements. Desktop looks as before except where a change below says otherwise.
+
+**Synced from the live site**
+- Name and line: Archgen Labs, "The future of compute starts with how we design it." in the title, headline, meta tags and JSON-LD; every absolute URL moves to https://archgenlabs.com (sitemap, robots, llms.txt, canonical and Open Graph tags, posts).
+- Logo: the ARCHGEN LABS wordmark, traced from the live PNG to one vector path (`assets/logo/archgen-labs-lockup.svg`), used inline in the header (28px tall) and the footer.
+- Navigation: desktop shows Blog and a Contact pill; the phone menu has Blog 01 and Contact 02.
+- Contact is booking-only: "Let’s talk silicon." and Book a conversation. The old form and its script are gone. `assets/js/booking.js` + `assets/css/booking.css` open the Google appointment calendar in a modal dialog for every `#contact` link and every calendar link, with an "Open calendar in a new tab" fallback, Escape / Close / tap-outside to close, and focus returned to the link that opened it.
+- Analytics: `assets/js/analytics.js` loads Microsoft Clarity on production hosts only.
+- Y Combinator: every YC link points to https://www.ycombinator.com/companies/archgen-labs (also first in the JSON-LD `sameAs`).
+
+**Feedback round**
+- Share card: `assets/social/og-1200x630.png` rebuilt as ARCHGEN LABS (it said Archgen AI), with the site's line and pitch in large type (nothing under 22px) and the die on a steel panel. Its source is `tools/social/og.html`; render with `node tools/social/og.mjs`.
+- One "Backed by Y Combinator" only, in the hero: the stats row under "Built for physical design" is removed.
+- "Chips went to 3D, EDA should too": the paragraph is cut from 249 to 128 characters.
+- Smaller, lighter titles: "Inside a run" (now up to 104px at weight 600), "Blog" and "Let’s talk silicon." (up to 128px at 600). The Contact title wraps instead of running off the screen.
+- Blog cards: the hover panel fades in without growing, so the row no longer jitters.
+- Footer fits one screen: 656px tall at 1440 × 900 (was 914), so the call to talk is never cut off.
+- Domains: `vercel.json` sends archgen.tech, www.archgen.tech and www.archgenlabs.com to https://archgenlabs.com with a permanent 308 redirect, keeping the path.
+
+**Loading screen (Route)**
+- Pin one lights, the AG net routes out of it, then the red pin flies to the header and writes ARCHGEN LABS out of itself. About 2.75 s, once per browser tab, on Home and every post. A tap or key skips it; reduced motion gets the finished logo and a 200 ms fade. It fires `archgen:loaded`, and the Home hero's reveal waits for it.
+- Sources: `assets/js/archgen-loader-route.js` and `assets/css/archgen-loader.css`. The build inlines both into every page (`#agl-css`, `#agl-js`), so nothing extra is downloaded before first paint.
+
+**Phones (699px wide and below unless noted)**
+- Hero: no "Ask the agent" list; a black Contact us button sits under the line, with "Backed by Y Combinator" under it; the agent console is about 15% shorter (4:3 die, tighter metric rows, a 184px log that scrolls inside like a terminal).
+- Hero scroll: the card's pin, shrink and dim are a CSS view timeline on the next section, so they move in step with the finger on the compositor instead of trailing a script (the script stays as a fallback). Same positions as before, checked at 360, 390, 820 and 1440px.
+- The ASCII horizon fills the whole "Built for physical design" section behind the text.
+- 3D stack (860px and below): the model sits right under "Chips went to 3D, EDA should too", then the text. On phones it opens and turns a quarter view as you scroll, through its own springs; drag and tap still work.
+- "Inside a run": the poster is 256px tall (was 380), so there is no empty band before the editor.
+- Blog: the "Blog" capitals stand exactly as tall as the dot chip's drawing (58.5px) and line up with it.
+- No click spark on phones; the spark's full-screen canvas is not set up there.
+- Footer links get about 38px tall tap areas on touch screens (were 19–22px), pixel-identical layout.
+- The address bar sliding in and out no longer reallocates the ASCII and spark canvases mid-scroll.
+
+**Desktop**
+- The Contact pill's hover keeps its glass light, now tinted with the brand red (#D65148), instead of washing out to pink.
+
+**Fixes**
+- Hero card stuck after Contact: scroll locks (booking dialog, loading screen) were on `<html>`, which threw the card's scroll timeline to its end, shrunk and pushed down out of the hero; some phone browsers kept it there after the dialog closed. The locks are on `<body>` now, and the card's animation restarts when either lock lifts.
+- The phone menu closes when Contact opens the booking dialog, and focus lands on the menu button when the dialog closes.
+
+**Checked**
+- A scripted walk of every section at 390, 820 and 1440px (loader, news bar, header, menu, hero console, booking dialog, 3D stack, editor, footer, Blog, Contact, back/forward, every post's reading bar, image viewer and figure, keyboard order): no page errors, no missing files.
+- Lighthouse (mobile / desktop): Home 99 / 100, posts 97–99 / 100; Accessibility, Best Practices and SEO 100 everywhere.
+- `sh tools/build.sh`: 5 pages, 0 problems.
+
 ## Review fixes (Oct 28)
 The design is unchanged: a before/after screenshot of every page at eight widths matches pixel for pixel, apart from the fixes listed (stack labels at 861–950px, the reading trace at 768px, one memory row).
 - Hero: the opening slide reveal is exactly as before (the steel panel wipes open from its cut corner, then the console rises in), but it plays once per visit, when the hero is first on screen in a visible page. Resizing across 760px or hiding and showing the page (the Claude preview does both) used to replay it seconds later; a page that loads hidden still opens with it.

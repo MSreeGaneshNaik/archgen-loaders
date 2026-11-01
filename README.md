@@ -20,7 +20,7 @@ The site is static, so it runs on GitHub Pages, Netlify, Vercel, Cloudflare Page
 
 **GitHub Pages:** Settings → Pages → Build and deployment → *Deploy from a branch* → `main` / `/ (root)` → Save. `.nojekyll` stops Jekyll from touching the files. A **private** repo needs a paid GitHub plan (Pro, Team or Enterprise) for Pages; on the free plan, make the repo public first.
 
-This repo is published on GitHub Pages from `main`: https://msreeganeshnaik.github.io/archgen-loaders/
+The live site is https://archgenlabs.com, served by Vercel. This copy is also published on GitHub Pages from `main`: https://msreeganeshnaik.github.io/archgen-loaders/
 
 **Vercel (archgenlabs.com):** `vercel.json` sends archgen.tech, www.archgen.tech and www.archgenlabs.com to https://archgenlabs.com with a permanent (308) redirect, so every old link lands on the .com.
 
@@ -108,12 +108,13 @@ archgen-loaders/
 |---|---|
 | `<head>` | scroll-to-top-on-open, the file:// font shim (between `fonts:head` markers, shared with the posts), meta tags, Open Graph, JSON-LD |
 | `<style>` | brand tokens (`:root`), then one section per part: top bar, content rail, hero and agent console, marquee, poster and editor, Blog list, Contact, footer, mobile menu, ASCII horizon, PixelBlast, news bar, 3D stack labels |
-| News bar, `<header class="bar">`, `#menu` | the strip above the header, the top bar and the phone menu |
-| `<section data-page="home">` | hero (headline, asks, agent console), "Built for physical design", chip-flow marquee, 3D stack, "Inside a run" poster and editor |
+| Loading screen (`#agl-css`, `#agl-js`) | inlined by the build from `assets/css/archgen-loader.css` and `assets/js/archgen-loader-route.js`; do not edit here |
+| News bar, `<header class="bar">`, `#menu` | the strip above the header, the top bar and the phone menu (Blog 01, Contact 02) |
+| `<section data-page="home">` | hero (headline, Contact us on phones, asks on tablet and desktop, agent console in `.stage-pin`), "Built for physical design", chip-flow marquee, 3D stack, "Inside a run" poster and editor |
 | `<section data-page="blog">` | the post list `<ol id="posts">` [gen] |
-| `<section data-page="contact">` | the form (prepares an email), "Book a conversation", direct lines, socials |
+| `<section data-page="contact">` | "Let’s talk silicon." and a "Book a conversation" button (opens the booking dialog) |
 | `<footer>` | the call to talk, links, the wordmark (lifted into every post by build_posts.py) |
-| main `<script>` | scheduler, hero reveal (plays once), router, content rail, mobile menu, ASCII horizon, PixelBlast, news bar, hero scroll stack, the agent console, editor tabs, contact form, Blog/Contact dot-matrix die, scroll-in entrances |
+| main `<script>` | scheduler, hero reveal (plays once), router, content rail, mobile menu, ASCII horizon, PixelBlast, news bar, hero scroll stack, the agent console, editor tabs, Blog/Contact dot-matrix die, scroll-in entrances |
 | `#hl-kernel`, `#hl-host`, `#hl-figure` | the Hairline engine, its host for this page, and the chip-stack figure (copy of tools/hairline/stack.js) |
 
 **Where to go for a change**
@@ -166,16 +167,16 @@ Light "ice paper" theme. One committed look; there is no dark mode. All of these
 ## Pages
 
 ### Home
-Product hero with a live agent console, the "Built for physical design" band over an ASCII horizon, the chip-flow ticker, the interactive 3D stack (Hairline engine; source in `tools/hairline/stack.js`), the "Inside a run" poster, the agent feed and the feature notes.
+Product hero with a live agent console (it stays nearly pinned, shrinks and dims as the next section slides over it), the "Built for physical design" band over an ASCII horizon, the chip-flow ticker, the interactive 3D stack (Hairline engine; source in `tools/hairline/stack.js`; on phones it opens and turns as you scroll), the "Inside a run" poster, the agent feed and the feature notes.
 
 ### Blog
 The page title with the dot-matrix die beside it, then the post list: `<ol class="posts" id="posts">` in `index.html`. Each row links to its post page.
 
 ### Contact
-The dot-matrix die beside the title, then a form with inline validation that prepares an email to `hari@archgen.tech`, and direct addresses with copy buttons.
+"Let’s talk silicon." with the dot-matrix die beside it (hidden on phones), then "Pick a time to meet us." and a Book a conversation button. Every link to `#contact` on the site, and every Google Calendar booking link, opens the booking dialog (`assets/js/booking.js`): the appointment calendar in a modal, with an "Open calendar in a new tab" fallback.
 
 ### Post pages
-Generated from `tools/posts.json`. The words and images are kept exactly as published on archgen.tech; images get their box reserved, so nothing shifts as they load. A contents rail (desktop), a reading-progress line, a figure viewer (click an image), and a live 3D figure card under the title.
+Generated from `tools/posts.json`. The words and images are kept exactly as published; images get their box reserved, so nothing shifts as they load. A contents rail (desktop), a reading-progress line, a figure viewer (click an image), and a live 3D figure card under the title.
 
 ## Blog figures (3D)
 
@@ -202,38 +203,40 @@ To change a figure: edit `tools/figures/three/<slug>.3d.js` (each file is laid o
 ## Performance and Lighthouse
 
 - Effects start after the page is up or when their section comes near, and every loop stops off-screen and in hidden tabs.
-- CSS animates `transform` and `opacity`, apart from the hero's opening wipe (a `clip-path`, 1.1 s), which plays once per visit when the hero is first on screen in a visible page. No loading screen: pages show their content on first paint.
+- CSS animates `transform` and `opacity`, apart from the hero's opening wipe (a `clip-path`, 1.1 s), which plays once per visit when the hero is first on screen in a visible page, after the loading screen has handed off.
+- The loading screen (Route, about 2.75 s, once per browser tab) is inlined into every page by the build, so nothing extra is downloaded before first paint. It is most of the mobile Speed Index: about 1.1 s without it, 2.4–2.9 s with it.
+- The hero card's pin-and-shrink is a CSS view timeline on the next section, so it runs on the compositor in step with the scroll (a script fallback covers browsers without scroll-driven animations). Scroll locks (the loading screen, the booking dialog) go on `<body>`, never `<html>`: a root lock throws that timeline to its end.
 - First load does no layout work it doesn't need: the router leaves the page-slide variable and the header's scroll check for real route changes, so the browser lays out Home once instead of twice (this removed a ~100 ms forced re-layout on phones).
 - Three.js (127 KB gzipped, tree-shaken) loads only for a figure about to be read, on a GPU; posts carry no figure script cost at load.
 - Images have reserved boxes and lossless WebP twins; scroll restoration is manual, so pages always open at the top.
 
-Lighthouse 12.2 (simulated throttling: Moto G Power on slow 4G for mobile, the desktop preset for desktop), headless Chromium, against a local static server with brotli compression. Three runs per page, Oct 28, 2026; the table gives the lowest score of the three.
+Lighthouse 12.2 (simulated throttling: Moto G Power on slow 4G for mobile, the desktop preset for desktop), headless Chromium, against a local static server with brotli compression. Nov 1, 2026, with the loading screen; Home mobile scored 97–99 over three runs.
 
 **Scores**
 
 | Page | Mobile perf. | Desktop perf. | Accessibility | Best Practices | SEO |
 |---|---|---|---|---|---|
-| Home (`index.html`) | 98 | 100 | 100 | 100 | 100 |
-| How We Ranked First (Fig 1) | 99 | 100 | 100 | 100 | 100 |
+| Home (`index.html`) | 99 | 100 | 100 | 100 | 100 |
+| How We Ranked First (Fig 1) | 97 | 100 | 100 | 100 | 100 |
 | Why Chip Design Takes 18 Months (Fig 2) | 99 | 100 | 100 | 100 | 100 |
-| Cognitive Agents (Fig 3) | 99 | 100 | 100 | 100 | 100 |
-| Disrupting the Semiconductor Industry (Fig 4) | 99 | 100 | 100 | 100 | 100 |
+| Cognitive Agents (Fig 3) | 98 | 100 | 100 | 100 | 100 |
+| Disrupting the Semiconductor Industry (Fig 4) | 98 | 100 | 100 | 100 | 100 |
 
 Accessibility, Best Practices and SEO are the same on mobile and desktop.
 
-**Core metrics, mobile** (median of the three runs)
+**Core metrics, mobile**
 
 | Page | FCP | LCP | TBT | CLS | Speed Index |
 |---|---|---|---|---|---|
-| Home | 1.1 s | 1.7 s | 140 ms | 0.001 | 1.1 s |
-| Fig 1 post | 1.1 s | 1.8 s | 90 ms | 0 | 1.1 s |
-| Fig 2 post | 1.1 s | 1.9 s | 30 ms | 0 | 1.1 s |
-| Fig 3 post | 1.1 s | 1.7 s | 40 ms | 0 | 1.1 s |
-| Fig 4 post | 1.1 s | 1.7 s | 60 ms | 0 | 1.1 s |
+| Home | 1.4 s | 1.7 s | 20 ms | 0.001 | 2.9 s |
+| Fig 1 post | 1.1 s | 2.0 s | 160 ms | 0 | 2.4 s |
+| Fig 2 post | 1.2 s | 2.0 s | 60 ms | 0 | 2.5 s |
+| Fig 3 post | 1.1 s | 1.9 s | 150 ms | 0 | 2.5 s |
+| Fig 4 post | 1.2 s | 2.0 s | 90 ms | 0 | 2.6 s |
 
-**Core metrics, desktop:** every page FCP 0.2–0.4 s, LCP 0.4–0.5 s, TBT 0 ms, CLS 0, Speed Index 0.3–0.6 s.
+**Core metrics, desktop:** every page FCP 0.3 s, LCP 0.4–0.5 s, TBT 0 ms, CLS 0, Speed Index 0.7–0.8 s.
 
-Scores move a little between runs on the same build (Home mobile: 98–99 over eleven runs this round). To re-run: serve the folder (`python3 -m http.server 8000`), then `npx lighthouse http://localhost:8000/blog/posts/<slug>.html --view` (add `--preset=desktop` for desktop). A host that compresses files (GitHub Pages, Netlify, Vercel) matches the brotli server used here.
+Scores move a little between runs on the same build. To re-run: serve the folder (`python3 -m http.server 8000`), then `npx lighthouse http://localhost:8000/blog/posts/<slug>.html --view` (add `--preset=desktop` for desktop). A host that compresses files (GitHub Pages, Netlify, Vercel) matches the brotli server used here.
 
 Headless test browsers have no GPU; check motion on real hardware.
 
@@ -259,6 +262,6 @@ To make the share card again: `node tools/social/og.mjs` (edit `tools/social/og.
 
 ## Before launch
 
-- [ ] **Forms need a backend.** Contact prepares an email; nothing is stored yet.
+- [x] **Contact:** booking-only (Google appointment calendar in a dialog); there is no form to store.
 - [x] **Name:** Archgen Labs everywhere: logo, copy, share card.
 
