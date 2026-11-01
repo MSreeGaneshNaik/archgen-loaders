@@ -294,7 +294,8 @@ var AG_MARK = "M202.35 46.42Q201.77 44.94 201.33 43.41Q200.89 41.89 200.59 40.32
  *            writes ARCHGEN LABS out of itself as it runs to the end;
  *   fly      the mark flies up and the wordmark opens out of it;
  *   iris     the screen closes down into the logo's slot, carrying the mark.
- * Gone by 1.96s after mount. With no header logo on screen, the page lifts away.
+ * Retract runs at PACE: its 1.96s choreography stretched evenly, gone by 2.74s.
+ * With no header logo on screen, the page lifts away.
  */
 ArchgenLoader.define("route", {
   theme: "ice",
@@ -345,6 +346,7 @@ ArchgenLoader.define("route", {
     var EXIT = 1100;                         /* the logo is whole and has been read */
     var END = mode === "retract" ? 1960 : 1530;
     var SHIFT = EXIT - 680;                  /* fly and iris keep their tested timing, later */
+    var PACE = mode === "retract" ? 1.4 : 1;  /* the whole retract choreography, stretched evenly */
     var plan = null;
     var LIFT = H.bezier(0.55, 0, 0.15, 1);
 
@@ -430,9 +432,15 @@ ArchgenLoader.define("route", {
     }
 
     return {
-      exitAt: EXIT,
-      end: END,
-      render: function (t) {
+      exitAt: EXIT * PACE,
+      end: END * PACE,
+      render: function (t) { renderAt(t / PACE); },
+      destroy: function () {
+        if (target) { target.style.opacity = ""; target.style.clipPath = ""; target.__aglHidden = false; }
+      }
+    };
+
+    function renderAt(t) {
         var s = H.spring(t, 1, 0.32);
         pin.style.transform = "scale(" + (0.25 + 0.75 * s).toFixed(4) + ")";
         pin.style.opacity = String(H.seg(t, 0, 80));
@@ -458,11 +466,7 @@ ArchgenLoader.define("route", {
         if (mode === "retract") return retract(t);
         if (mode === "iris") return iris(t - SHIFT);
         return fly(t - SHIFT);
-      },
-      destroy: function () {
-        if (target) { target.style.opacity = ""; target.style.clipPath = ""; target.__aglHidden = false; }
-      }
-    };
+    }
   }
 });
 

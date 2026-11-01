@@ -1,6 +1,6 @@
 # Archgen loader
 
-The loading screen for [archgenlabs.com](https://archgenlabs.com): **Route, landing by retract**, about two seconds.
+The loading screen for [archgenlabs.com](https://archgenlabs.com): **Route, landing by retract**, about 2.75 seconds.
 
 **See it:** https://msreeganeshnaik.github.io/archgen-loaders/
 

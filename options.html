@@ -163,14 +163,14 @@ html.agl-lock, html.agl-lock body { overflow: hidden; }
 <main>
   <header class="intro">
     <h1>Five ways into Archgen<i class="dot"></i></h1>
-    <p>Loading screens for archgenlabs.com, built from the brand's own net, die, Hairline figure and wafer map. Route is the pick: it now runs two seconds and lands in the header. The other four each finish within 1.2 seconds. Every one skips on a tap and drops to a still frame for anyone who asks for less motion.</p>
+    <p>Loading screens for archgenlabs.com, built from the brand's own net, die, Hairline figure and wafer map. Route is the pick: it now runs about 2.75 seconds and lands in the header. The other four each finish within 1.2 seconds. Every one skips on a tap and drops to a still frame for anyone who asks for less motion.</p>
   </header>
 
   <section class="loader" data-kind="route" aria-labelledby="h-route">
     <div class="copy">
       <h2 id="h-route">Route</h2>
       <p>Pin one lights and the AG net routes out of it, net by net. The logo holds for a beat, then the nets route back into pin one, and the red pin rises on an arc to the header and writes ARCHGEN LABS out of itself.</p>
-      <p class="timing">Gone at <b>2.00 s</b> on desktop and <b>1.99 s</b> on a phone, from a cold page.</p>
+      <p class="timing">Gone at <b>2.77 s</b> on desktop and <b>2.78 s</b> on a phone, from a cold page.</p>
       <div class="actions"><button class="replay" type="button">Replay route</button><button class="full" type="button">Full screen</button></div>
     </div>
     <div class="screen" role="img" aria-label="The Route loader playing over the Archgen Labs home page"><span class="brand" aria-hidden="true"><i class="patch"></i><span class="lockup"></span></span></div>
@@ -224,7 +224,7 @@ html.agl-lock, html.agl-lock body { overflow: hidden; }
     <div class="tablewrap">
       <table>
         <thead><tr><th scope="col">Loader</th><th scope="col">Desktop</th><th scope="col">Phone</th><th scope="col">Reduced motion</th><th scope="col">Tap to skip</th></tr></thead>
-        <tbody><tr><td>Route</td><td>2.00 s</td><td>1.99 s</td><td>0.47 s</td><td>0.52 s</td></tr><tr><td>Place</td><td>1.13 s</td><td>1.13 s</td><td>0.48 s</td><td>0.46 s</td></tr><tr><td>Stack</td><td>1.11 s</td><td>1.09 s</td><td>0.47 s</td><td>0.46 s</td></tr><tr><td>Close</td><td>1.16 s</td><td>1.16 s</td><td>0.46 s</td><td>0.50 s</td></tr><tr><td>Expose</td><td>1.15 s</td><td>1.14 s</td><td>0.47 s</td><td>0.46 s</td></tr></tbody>
+        <tbody><tr><td>Route</td><td>2.77 s</td><td>2.78 s</td><td>0.46 s</td><td>0.50 s</td></tr><tr><td>Place</td><td>1.13 s</td><td>1.13 s</td><td>0.48 s</td><td>0.46 s</td></tr><tr><td>Stack</td><td>1.11 s</td><td>1.09 s</td><td>0.47 s</td><td>0.46 s</td></tr><tr><td>Close</td><td>1.16 s</td><td>1.16 s</td><td>0.46 s</td><td>0.50 s</td></tr><tr><td>Expose</td><td>1.15 s</td><td>1.14 s</td><td>0.47 s</td><td>0.46 s</td></tr></tbody>
       </table>
     </div>
   </section>
@@ -1334,7 +1334,8 @@ hairline({
  *            writes ARCHGEN LABS out of itself as it runs to the end;
  *   fly      the mark flies up and the wordmark opens out of it;
  *   iris     the screen closes down into the logo's slot, carrying the mark.
- * Gone by 1.96s after mount. With no header logo on screen, the page lifts away.
+ * Retract runs at PACE: its 1.96s choreography stretched evenly, gone by 2.74s.
+ * With no header logo on screen, the page lifts away.
  */
 ArchgenLoader.define("route", {
   theme: "ice",
@@ -1385,6 +1386,7 @@ ArchgenLoader.define("route", {
     var EXIT = 1100;                         /* the logo is whole and has been read */
     var END = mode === "retract" ? 1960 : 1530;
     var SHIFT = EXIT - 680;                  /* fly and iris keep their tested timing, later */
+    var PACE = mode === "retract" ? 1.4 : 1;  /* the whole retract choreography, stretched evenly */
     var plan = null;
     var LIFT = H.bezier(0.55, 0, 0.15, 1);
 
@@ -1470,9 +1472,15 @@ ArchgenLoader.define("route", {
     }
 
     return {
-      exitAt: EXIT,
-      end: END,
-      render: function (t) {
+      exitAt: EXIT * PACE,
+      end: END * PACE,
+      render: function (t) { renderAt(t / PACE); },
+      destroy: function () {
+        if (target) { target.style.opacity = ""; target.style.clipPath = ""; target.__aglHidden = false; }
+      }
+    };
+
+    function renderAt(t) {
         var s = H.spring(t, 1, 0.32);
         pin.style.transform = "scale(" + (0.25 + 0.75 * s).toFixed(4) + ")";
         pin.style.opacity = String(H.seg(t, 0, 80));
@@ -1498,11 +1506,7 @@ ArchgenLoader.define("route", {
         if (mode === "retract") return retract(t);
         if (mode === "iris") return iris(t - SHIFT);
         return fly(t - SHIFT);
-      },
-      destroy: function () {
-        if (target) { target.style.opacity = ""; target.style.clipPath = ""; target.__aglHidden = false; }
-      }
-    };
+    }
   }
 });
 
