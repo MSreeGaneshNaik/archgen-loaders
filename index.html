@@ -913,6 +913,14 @@ main{position:relative;z-index:1;background:var(--ink);display:flow-root}
   .s3d-copy{padding-bottom:16px}
 }
 .s3d-cap{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:4px;font-size:12px;color:var(--paper-3)}
+/* one column: the model comes right after "Chips went to 3D, EDA should too", then the text and the list */
+@media (max-width:860px){
+  .s3d{gap:22px}
+  .s3d-copy{display:contents}
+  .s3d-copy>*{order:2}
+  .s3d-copy>h2{order:0;position:relative;z-index:1}
+  .s3d-fig{order:1}
+}
 /* a little of the brand red in the model: the TSV field and the package pads glow faintly red; the picked die and the rest macro take the full red edge */
 #s3d-stage svg .dot.m{fill:rgba(214,81,72,.78)}
 #s3d-stage svg .dot.off{fill:rgba(214,81,72,.38)}
@@ -926,6 +934,11 @@ main{position:relative;z-index:1;background:var(--ink);display:flow-root}
 .dotchip{grid-column:2;grid-row:1;align-self:center;width:clamp(76px,18vw,280px);aspect-ratio:1;position:relative;touch-action:pan-y;cursor:crosshair}
 .dotchip canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 @media (max-width:699px){.dotchip{width:76px}[data-page="contact"] .dotchip{display:none}}
+/* phones: "Blog" stands as tall as the dot chip beside it: its capitals (.70em in Cascadia) match the chip's drawn 58.5px
+   (the 76px box has ~9px of air around the drawing), trimmed to the capitals and centred so the two line up top and bottom */
+@media (max-width:699px){
+  .blog-head .mega{font-size:min(84px,calc((100vw - 124px) / 2.36));line-height:.7;text-box:trim-both cap alphabetic;align-self:center}
+}
 @media (prefers-contrast:more){.dotchip{display:none}}
 /* phones: the demo card is simply there on first paint; the wipe and rise intro stays on larger screens */
 @media (max-width:760px){.stage,.frag{animation:none}}
@@ -2236,7 +2249,7 @@ void main(){
     // [container, children to animate (null = the container itself), stagger seconds]
     const GROUPS = [
       ['.bnext-copy', ':scope > *', .09],
-      ['.s3d', ':scope > .s3d-copy, :scope > .s3d-fig', .14],
+      ['.s3d', innerWidth < 861 ? ':scope > .s3d-copy > *, :scope > .s3d-fig' : ':scope > .s3d-copy, :scope > .s3d-fig', .14],   // one column: the copy is unboxed (display: contents), so its parts enter one by one
       ['#peek', ':scope > .poster, :scope > .caption, :scope > .editor', .1],
     ];
     const items = [];
