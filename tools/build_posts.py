@@ -25,9 +25,9 @@ footer = re.sub(r'href="#(home|blog|contact)"', lambda m: f'href="../../index.ht
 # the file:// font shim, shared with the site
 fonts_head = re.search(r'<!-- fonts:head -->.*?<!-- /fonts:head -->', index, re.S).group(0)
 assert '<svg' in lockup and 'foot-grid' in footer
-# the loading screen is inlined into every page (no extra requests before first paint); its sources stay in assets/
-LOADER_CSS = '<style id="agl-css">\n' + open(os.path.join(ROOT, 'assets', 'css', 'archgen-loader.css'), encoding='utf-8').read().strip() + '\n</style>'
-LOADER_JS = '<script id="agl-js">\n' + open(os.path.join(ROOT, 'assets', 'js', 'archgen-loader-route.js'), encoding='utf-8').read().strip() + '\n</script>'
+# the loading screen is inlined into every page (no extra requests before first paint); its sources live in tools/loader/
+LOADER_CSS = '<style id="agl-css">\n' + open(os.path.join(ROOT, 'tools', 'loader', 'archgen-loader.css'), encoding='utf-8').read().strip() + '\n</style>'
+LOADER_JS = '<script id="agl-js">\n' + open(os.path.join(ROOT, 'tools', 'loader', 'archgen-loader-route.js'), encoding='utf-8').read().strip() + '\n</script>'
 
 ARROW_L = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"/></svg>'
 e = lambda s: html.escape(s, quote=True)

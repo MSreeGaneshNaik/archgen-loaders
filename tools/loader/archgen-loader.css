@@ -1,4 +1,5 @@
-/* The loading screen (Route): brand tokens from Brand Identity · Volume 01. Paired with assets/js/archgen-loader-route.js. */
+/* The loading screen (Route): its styles. Brand tokens from Brand Identity · Volume 01.
+   Source file: tools/build_posts.py inlines it into every page as <style id="agl-css">; edit here, then sh tools/build.sh. */
 .agl {
   --agl-ice: #E8EDF1; --agl-ink: #0E1317; --agl-surface: #F7FAFB; --agl-slate: #435565;
   --agl-flare: #D65148; --agl-steel: #738A9A; --agl-icefill: #CCDBE2; --agl-die: #161E24;
