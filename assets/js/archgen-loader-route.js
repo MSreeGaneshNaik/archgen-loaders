@@ -193,13 +193,10 @@ var AG_MARK = "M202.35 46.42Q201.77 44.94 201.33 43.41Q200.89 41.89 200.59 40.32
  * Route. Pin one lights, and the Archgen net routes out of it, net by net, the
  * way a router lays copper. The supplied mark is never redrawn: a mask follows
  * each net's centreline and uncovers the real path. The finished logo holds
- * for a beat. Then it hands off to the header logo (opts.handoff):
- *   retract  (default) the nets route back into pin one, last laid first out;
- *            the red pin rises on an arc to the head of the wordmark, and
- *            writes ARCHGEN LABS out of itself as it runs to the end;
- *   fly      the mark flies up and the wordmark opens out of it;
- *   iris     the screen closes down into the logo's slot, carrying the mark.
- * Retract runs at PACE: its 1.96s choreography stretched evenly, gone by 2.74s.
+ * for a beat. Then it hands off to the header logo: the nets route back into
+ * pin one, last laid first out; the red pin rises on an arc to the head of the
+ * wordmark, and writes ARCHGEN LABS out of itself as it runs to the end.
+ * It runs at PACE: its 1.96s choreography stretched evenly, gone by 2.74s.
  * With no header logo on screen, the page lifts away.
  */
 ArchgenLoader.define("route", {
@@ -247,11 +244,9 @@ ArchgenLoader.define("route", {
     }
     find();
 
-    var mode = opts.handoff === "fly" || opts.handoff === "iris" ? opts.handoff : "retract";
     var EXIT = 1100;                         /* the logo is whole and has been read */
-    var END = mode === "retract" ? 1960 : 1530;
-    var SHIFT = EXIT - 680;                  /* fly and iris keep their tested timing, later */
-    var PACE = mode === "retract" ? 1.4 : 1;  /* the whole retract choreography, stretched evenly */
+    var END = 1960;
+    var PACE = 1.4;                          /* the whole choreography, stretched evenly */
     var plan = null;
     var LIFT = H.bezier(0.55, 0, 0.15, 1);
 
@@ -305,36 +300,6 @@ ArchgenLoader.define("route", {
       svg.style.opacity = String(1 - H.seg(t, 1895, 60, H.ease.std));
     }
 
-    function place(f) {
-      f = Math.min(1, f);
-      var a = plan.from, b = plan.to;
-      var h = H.lerp(a.h, b.h, f);
-      pose(a.x, a.y, H.lerp(a.x, b.x, f), H.lerp(a.y, b.y, f), h / a.h);
-    }
-
-    /* fly: the mark flies up and the wordmark opens out of it from the centre */
-    function fly(t) {
-      place(H.spring(t - 680, 1, 0.26) / H.spring(280, 1, 0.26));
-      bg.style.opacity = String(1 - H.seg(t, 740, 240, H.ease.std));
-      var r = H.seg(t, 955, 140, H.ease.out);
-      target.style.opacity = r > 0 ? "1" : "0";
-      var c = (50 * (1 - r)).toFixed(2) + "%";
-      target.style.clipPath = r < 1 ? "inset(0 " + c + " 0 " + c + ")" : "";
-      svg.style.opacity = String(1 - H.seg(t, 965, 60));
-    }
-
-    /* iris: the screen closes down into the logo's slot, carrying the mark */
-    function iris(t) {
-      var f = Math.min(1, H.spring(t - 680, 1, 0.3) / H.spring(320, 1, 0.3));
-      place(f);
-      var bx = plan.box, pad = 6;
-      var top = H.lerp(0, bx.y - pad, f), left = H.lerp(0, bx.x - pad, f);
-      var right = H.lerp(0, plan.W - (bx.x + bx.w + pad), f), bottom = H.lerp(0, plan.H - (bx.y + bx.h + pad), f);
-      el.style.clipPath = "inset(" + top.toFixed(1) + "px " + right.toFixed(1) + "px " + bottom.toFixed(1) + "px " + left.toFixed(1) + "px round " + (6 * f).toFixed(1) + "px)";
-      target.style.opacity = t >= 990 ? "1" : "0";
-      target.style.clipPath = "";
-      el.style.opacity = String(1 - H.seg(t, 990, 80, H.ease.std));
-    }
 
     return {
       exitAt: EXIT * PACE,
@@ -368,16 +333,12 @@ ArchgenLoader.define("route", {
           el.style.transform = "translate3d(0," + (-100 * e).toFixed(3) + "%,0)";
           return;
         }
-        if (mode === "retract") return retract(t);
-        if (mode === "iris") return iris(t - SHIFT);
-        return fly(t - SHIFT);
+        retract(t);
     }
   }
 });
 
 (function () {
-  var tag = document.currentScript, o = {};
-  if (tag && tag.dataset.handoff) o.handoff = tag.dataset.handoff;
   try { if (sessionStorage.getItem("agl-seen")) return; sessionStorage.setItem("agl-seen", "1"); } catch (e) {}
-  ArchgenLoader.mount("route", o);
+  ArchgenLoader.mount("route");
 })();

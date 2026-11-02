@@ -60,7 +60,7 @@ archgen-loaders/
 │   ├── js/                         archgen-loader-route.js (the loading screen), booking.js, analytics.js (Clarity, production only)
 │   ├── figures/              [gen] still posters of the 3D figures: <slug>-wide.webp, <slug>-narrow.webp
 │   ├── fonts/                      Cascadia Code (self-hosted woff2, licence in OFL.txt) + local-fonts.js, the file:// fallback
-│   ├── logo/                       the logo set (lockup, mark, app tiles, favicon) and raster icons (512px, apple-touch)
+│   ├── logo/                       archgen-labs-lockup.svg (the wordmark), the favicon and raster icons (512px, apple-touch)
 │   ├── social/                     og-1200x630.png, the card shown when a link is shared ([gen] by tools/social/og.mjs)
 │   └── vendor/                     three.min.js (Three.js r158, trimmed to what the figures use) + its licence
 │
@@ -82,9 +82,6 @@ archgen-loaders/
 │   │   └── three-entry.js          the Three.js classes the trimmed bundle keeps
 │   ├── hairline/
 │   │   └── stack.js                the Home page's 3D chip-stack model (the source of index.html's #hl-figure)
-│   ├── logo/
-│   │   ├── build_logo.py           regenerates the older logo SVGs in assets/logo/
-│   │   └── reference-screenshot.png  the original logo it was traced from
 │   └── social/
 │       ├── og.html                 the share card's layout (words, die, wordmark)
 │       └── og.mjs                  renders it to assets/social/og-1200x630.png
@@ -128,7 +125,7 @@ archgen-loaders/
 | What all figures share (colours, light, turning) | `tools/figures/three/three-kit.js` | `sh tools/build.sh --posters` |
 | A figure card's title, description or key | `tools/figures/figures.json` | `sh tools/build.sh` |
 | Images in a post | `assets/blog/` (keep the file name) | `sh tools/build.sh` (re-reads image sizes) |
-| The logo | `tools/logo/build_logo.py` | see Logo below |
+| The logo | `assets/logo/archgen-labs-lockup.svg` and the inline copies in the header and footer of `index.html` | `sh tools/build.sh` (posts lift the header and footer) |
 
 ## Building
 
