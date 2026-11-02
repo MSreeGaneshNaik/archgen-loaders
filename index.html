@@ -622,7 +622,7 @@ footer{position:relative;border-top:1px solid var(--line);padding-top:clamp(40px
 .foot-grid ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:14px}
 .foot-grid a{text-decoration:none}
 .foot-grid a:hover{color:var(--signal)}
-.wordmark{user-select:none}
+.wordmark{user-select:none;overflow:clip;overflow-clip-margin:2px}   /* the mask the wordmark rises out of (assets/js/footer-reveal.js) */
 .wordmark svg{display:block;width:100%;height:auto;overflow:visible}
 .wordmark path{transition:opacity .4s}
 .foot-base{display:flex;flex-wrap:wrap;gap:10px 28px;justify-content:space-between;padding-block:18px calc(18px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);font-size:12px;color:var(--paper-3);position:relative;z-index:1;background:var(--ink)}
@@ -979,6 +979,7 @@ html.agl-lock body { overflow: hidden; }   /* the body, not the root: a root loc
 </style>
 <script src="assets/js/analytics.js" defer></script>
 <script src="assets/js/booking.js" defer></script>
+<script src="assets/js/footer-reveal.js" defer></script>
 </head>
 <body>
 <script id="agl-js">
@@ -2665,7 +2666,7 @@ void main(){
     });
   });
 
-  /* ---------------- AnimatedContent: scroll-in entrances for every section (hero and footer have their own) ----------------
+  /* ---------------- AnimatedContent: scroll-in entrances for every section (hero and footer have their own; the footer's is assets/js/footer-reveal.js) ----------------
      Same flow as React Bits AnimatedContent: vertical, distance ~100px (scaled for phones), opacity 0 -> 1, power3.out 0.8s,
      starts when the block's top passes 90% of the viewport (threshold 0.1), plays once, optional stagger between siblings. */
   defer(function(){
