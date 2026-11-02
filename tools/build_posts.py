@@ -131,6 +131,7 @@ for i, slug in enumerate(order):
 {LOADER_CSS}
 <script src="../../assets/js/analytics.js" defer></script>
 <script src="../../assets/js/booking.js" defer></script>
+<script src="../../assets/js/footer-reveal.js" defer></script>
 </head>
 <body>
 {LOADER_JS}
