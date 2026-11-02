@@ -16,7 +16,6 @@
 }
 .agl[data-host="box"] { position: absolute; }
 .agl--ice { --agl-ground: #E8EDF1; --agl-fg: #0E1317; }
-.agl--ink { --agl-ground: #0E1317; --agl-fg: #E8EDF1; }
 .agl svg { display: block; overflow: visible; }
 .agl-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 html.agl-lock body { overflow: hidden; }   /* the body, not the root: a root lock throws the hero card's scroll timeline to its end */

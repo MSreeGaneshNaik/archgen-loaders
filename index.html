@@ -191,7 +191,7 @@ html{scrollbar-color:var(--steel) var(--ink-2);accent-color:var(--flare);caret-c
 .swap>span+span{color:var(--signal)}
 a:hover .swap>span,a:focus-visible .swap>span{transform:translateY(-100%)}
 .pill{display:inline-flex;align-items:center;gap:10px;background:var(--paper);color:var(--ink);text-decoration:none;font-family:inherit;font-weight:600;font-size:13px;border:0;border-radius:999px;padding:10px 18px;cursor:pointer;transition:background .25s,color .25s,box-shadow .25s,transform .35s var(--ease);white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-.pill:active,.copy:active,.nav a:active{transform:scale(.96);transition-duration:90ms}
+.pill:active,.nav a:active{transform:scale(.96);transition-duration:90ms}
 .pill:hover{background:var(--flare);color:#0E1317}
 .pill.ghost{background:var(--ink-3);color:var(--paper)}
 .pill.ghost:hover{background:#C3CFD7;color:var(--paper)}
@@ -235,7 +235,6 @@ main{overflow-x:clip}   /* the sideways page slide never makes the page scroll s
 @media (max-width:760px){.rail{display:none}}
 
 /* ---------- shared type ---------- */
-.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-3)}
 h1,h2,h3{margin:0;font-weight:600;text-wrap:balance}
 .display{font-size:clamp(34px,6.2vw,92px);line-height:1.02;letter-spacing:-.02em}
 .mega{font-size:clamp(64px,17vw,250px);line-height:.86;letter-spacing:-.035em;font-weight:700}
@@ -253,10 +252,6 @@ h1,h2,h3{margin:0;font-weight:600;text-wrap:balance}
 
 /* ---------- HOME: hero ---------- */
 
-.yc{display:inline-flex;align-items:center;gap:10px;font-size:12px;color:var(--paper-3);text-decoration:none;width:max-content}
-.yc i{font-style:normal;display:grid;place-items:center;width:20px;height:20px;background:var(--yc);color:#fff;font-weight:700;font-size:12px;border-radius:3px}
-.yc b{color:var(--paper);font-weight:600}
-.yc:hover b{color:var(--signal)}
 
 /* ---------- HOME: cinematic hero (Shopify Editions treatment) ---------- */
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
@@ -548,8 +543,6 @@ h1,h2,h3{margin:0;font-weight:600;text-wrap:balance}
 
 /* ---------- feature rows (Shopify-style) ---------- */
 
-/* ---------- CTA band ---------- */
-.band-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
 /* the footer opens with the call to talk: one ending for every page */
 .foot-cta{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:20px 48px;padding-bottom:clamp(24px,3vw,32px);margin-bottom:clamp(24px,3vw,32px);border-bottom:1px solid var(--line)}
 .foot-cta .display{font-size:clamp(28px,3.6vw,52px);max-width:18ch;margin:0}
@@ -592,27 +585,6 @@ h1,h2,h3{margin:0;font-weight:600;text-wrap:balance}
 .defn ol{margin:0;padding-left:1.4em;display:grid;gap:4px;color:var(--paper-2);font-size:14px}
 .defn li::marker{color:var(--signal)}
 
-/* ---------- CONTACT ---------- */
-.contact{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:clamp(20px,3vw,40px);padding-block:clamp(40px,6vw,80px) clamp(56px,8vw,110px)}
-@media (max-width:900px){.contact{grid-template-columns:1fr}}
-form.card{gap:16px}
-.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media (max-width:600px){.fgrid{grid-template-columns:1fr}}
-.fld{display:grid;gap:6px;min-width:0}
-.fld label{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--paper-3)}
-.fld input,.fld select,.fld textarea{width:100%;font:inherit;font-size:14px;color:var(--paper);background:rgba(232,237,241,.7);border:1px solid var(--line-2);border-radius:10px;padding:12px 14px;outline:none;transition:border-color .2s,box-shadow .2s}
-.fld textarea{min-height:130px;resize:vertical}
-.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--signal);box-shadow:0 0 0 4px rgba(214,81,72,.12)}
-.fld select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--paper-2) 50%),linear-gradient(135deg,var(--paper-2) 50%,transparent 50%);background-position:calc(100% - 20px) 52%,calc(100% - 15px) 52%;background-size:5px 5px;background-repeat:no-repeat}
-.fld [aria-invalid="true"]{border-color:var(--signal)}
-.fld .hint{font-size:12px;color:var(--signal);min-height:1.1em}
-.ready{border-radius:12px;padding:16px;background:rgba(67,85,101,.18);box-shadow:inset 0 0 0 1px rgba(214,81,72,.4);display:grid;gap:12px}
-.ready p{margin:0}
-.aside{display:grid;gap:16px;align-content:start}
-.book{gap:12px}.book-t{margin:0;font-size:14px;line-height:1.55;color:var(--paper-2)}
-.copy{font:inherit;font-size:12px;background:transparent;color:var(--paper-2);border:1px solid var(--line-2);border-radius:999px;padding:5px 12px;cursor:pointer}
-.copy:hover{color:var(--signal);border-color:var(--signal)}
-.sel{user-select:all}
 
 /* ---------- footer ---------- */
 footer{position:relative;border-top:1px solid var(--line);padding-top:clamp(40px,4vw,56px);overflow:hidden;background:linear-gradient(180deg,rgba(232,237,241,.4),var(--ink) 40%)}
@@ -645,21 +617,6 @@ footer{position:relative;border-top:1px solid var(--line);padding-top:clamp(40px
 .foot-grid ul a:hover .ico{color:var(--signal)}
 .wordmark{color:var(--paper);margin-top:clamp(32px,4vw,48px);margin-bottom:clamp(24px,3vw,32px);padding-top:clamp(24px,3vw,32px);border-top:1px solid var(--line)}
 .wordmark path{stroke:none}
-/* contact: one grid for every row, so labels, values and actions line up */
-.line-item{display:grid;grid-template-columns:136px minmax(0,1fr) auto;align-items:center;gap:12px;min-height:54px;padding-block:8px;border-bottom:1px solid var(--line);font-size:14px}
-.line-item:last-child{border-bottom:0}
-.li-k{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--paper-3)}
-.li-k .ico{color:var(--paper-2)}
-.li-v{font-weight:400;min-width:0;overflow-wrap:anywhere}
-a.li-v{grid-column:2/4;display:flex;justify-content:space-between;align-items:center;gap:12px;text-decoration:none;transition:color .2s}
-a.li-v::after{content:"↗";color:var(--paper-3);transition:color .2s,transform .28s var(--ease)}
-@media (hover:hover){a.li-v:hover{color:var(--signal)}a.li-v:hover::after{color:var(--signal);transform:translate(2px,-2px)}}
-.copy{min-width:64px;transition:color .2s,border-color .2s,transform .28s var(--ease)}
-.copy:active{transform:scale(.95);transition-duration:.08s}
-.fgrid{row-gap:20px}
-.fld .hint{min-height:0}.fld .hint:not(:empty){margin-top:2px}
-#cform{gap:22px}
-@media (max-width:440px){.line-item{grid-template-columns:110px minmax(0,1fr) auto}}
 
 /* ---------- specular button (vanilla port of React Bits SpecularButton): a light on the rim that slides to the
    point nearest the cursor and brightens as it approaches, a sheen inside the glass under it, a soft spill outside;
@@ -767,7 +724,7 @@ footer>.wrap{position:relative;z-index:1}
 .ycd{position:absolute;left:50%;top:50%;font-size:11px;font-weight:700;line-height:1;color:var(--yc);opacity:0;pointer-events:none;
   text-shadow:0 0 6px rgba(242,101,34,.3);will-change:transform,opacity}
 /* email addresses copy on click: a small "Copied" chip rises from the address */
-a[data-email],.li-v[data-email]{cursor:copy}
+a[data-email]{cursor:copy}
 .copied-chip{position:absolute;z-index:95;transform:translate(-50%,-100%);padding:5px 10px;border-radius:999px;background:var(--paper);color:var(--ink);
   font:600 11.5px/1 var(--mono);letter-spacing:.02em;white-space:nowrap;pointer-events:none;box-shadow:0 6px 20px rgba(14,19,23,.18);
   animation:chip 1.3s var(--ease) forwards}
@@ -870,7 +827,6 @@ main{position:relative;z-index:1;background:var(--ink);display:flow-root}
 @media (max-width:860px){.s3d{grid-template-columns:minmax(0,1fr)}}
 @media (min-width:601px) and (max-width:699px){.poster{min-height:240px}}   /* larger phones: the same tight poster */
 .s3d-copy{display:grid;gap:22px;align-content:start}
-.nw{white-space:nowrap}
 .s3d-copy .display{font-size:clamp(28px,2.55vw,44px);max-width:none;text-wrap:balance}
 .s3d-list{margin:4px 0 0;display:grid;border-top:1px solid var(--line-2)}
 .s3d-list>div{display:grid;grid-template-columns:minmax(0,17ch) minmax(0,1fr);gap:16px;padding:13px 0;border-bottom:1px solid var(--line)}
@@ -964,7 +920,6 @@ main{position:relative;z-index:1;background:var(--ink);display:flow-root}
 }
 .agl[data-host="box"] { position: absolute; }
 .agl--ice { --agl-ground: #E8EDF1; --agl-fg: #0E1317; }
-.agl--ink { --agl-ground: #0E1317; --agl-fg: #E8EDF1; }
 .agl svg { display: block; overflow: visible; }
 .agl-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 html.agl-lock body { overflow: hidden; }   /* the body, not the root: a root lock throws the hero card's scroll timeline to its end */
@@ -1178,13 +1133,10 @@ var AG_MARK = "M202.35 46.42Q201.77 44.94 201.33 43.41Q200.89 41.89 200.59 40.32
  * Route. Pin one lights, and the Archgen net routes out of it, net by net, the
  * way a router lays copper. The supplied mark is never redrawn: a mask follows
  * each net's centreline and uncovers the real path. The finished logo holds
- * for a beat. Then it hands off to the header logo (opts.handoff):
- *   retract  (default) the nets route back into pin one, last laid first out;
- *            the red pin rises on an arc to the head of the wordmark, and
- *            writes ARCHGEN LABS out of itself as it runs to the end;
- *   fly      the mark flies up and the wordmark opens out of it;
- *   iris     the screen closes down into the logo's slot, carrying the mark.
- * Retract runs at PACE: its 1.96s choreography stretched evenly, gone by 2.74s.
+ * for a beat. Then it hands off to the header logo: the nets route back into
+ * pin one, last laid first out; the red pin rises on an arc to the head of the
+ * wordmark, and writes ARCHGEN LABS out of itself as it runs to the end.
+ * It runs at PACE: its 1.96s choreography stretched evenly, gone by 2.74s.
  * With no header logo on screen, the page lifts away.
  */
 ArchgenLoader.define("route", {
@@ -1232,11 +1184,9 @@ ArchgenLoader.define("route", {
     }
     find();
 
-    var mode = opts.handoff === "fly" || opts.handoff === "iris" ? opts.handoff : "retract";
     var EXIT = 1100;                         /* the logo is whole and has been read */
-    var END = mode === "retract" ? 1960 : 1530;
-    var SHIFT = EXIT - 680;                  /* fly and iris keep their tested timing, later */
-    var PACE = mode === "retract" ? 1.4 : 1;  /* the whole retract choreography, stretched evenly */
+    var END = 1960;
+    var PACE = 1.4;                          /* the whole choreography, stretched evenly */
     var plan = null;
     var LIFT = H.bezier(0.55, 0, 0.15, 1);
 
@@ -1290,36 +1240,6 @@ ArchgenLoader.define("route", {
       svg.style.opacity = String(1 - H.seg(t, 1895, 60, H.ease.std));
     }
 
-    function place(f) {
-      f = Math.min(1, f);
-      var a = plan.from, b = plan.to;
-      var h = H.lerp(a.h, b.h, f);
-      pose(a.x, a.y, H.lerp(a.x, b.x, f), H.lerp(a.y, b.y, f), h / a.h);
-    }
-
-    /* fly: the mark flies up and the wordmark opens out of it from the centre */
-    function fly(t) {
-      place(H.spring(t - 680, 1, 0.26) / H.spring(280, 1, 0.26));
-      bg.style.opacity = String(1 - H.seg(t, 740, 240, H.ease.std));
-      var r = H.seg(t, 955, 140, H.ease.out);
-      target.style.opacity = r > 0 ? "1" : "0";
-      var c = (50 * (1 - r)).toFixed(2) + "%";
-      target.style.clipPath = r < 1 ? "inset(0 " + c + " 0 " + c + ")" : "";
-      svg.style.opacity = String(1 - H.seg(t, 965, 60));
-    }
-
-    /* iris: the screen closes down into the logo's slot, carrying the mark */
-    function iris(t) {
-      var f = Math.min(1, H.spring(t - 680, 1, 0.3) / H.spring(320, 1, 0.3));
-      place(f);
-      var bx = plan.box, pad = 6;
-      var top = H.lerp(0, bx.y - pad, f), left = H.lerp(0, bx.x - pad, f);
-      var right = H.lerp(0, plan.W - (bx.x + bx.w + pad), f), bottom = H.lerp(0, plan.H - (bx.y + bx.h + pad), f);
-      el.style.clipPath = "inset(" + top.toFixed(1) + "px " + right.toFixed(1) + "px " + bottom.toFixed(1) + "px " + left.toFixed(1) + "px round " + (6 * f).toFixed(1) + "px)";
-      target.style.opacity = t >= 990 ? "1" : "0";
-      target.style.clipPath = "";
-      el.style.opacity = String(1 - H.seg(t, 990, 80, H.ease.std));
-    }
 
     return {
       exitAt: EXIT * PACE,
@@ -1353,18 +1273,14 @@ ArchgenLoader.define("route", {
           el.style.transform = "translate3d(0," + (-100 * e).toFixed(3) + "%,0)";
           return;
         }
-        if (mode === "retract") return retract(t);
-        if (mode === "iris") return iris(t - SHIFT);
-        return fly(t - SHIFT);
+        retract(t);
     }
   }
 });
 
 (function () {
-  var tag = document.currentScript, o = {};
-  if (tag && tag.dataset.handoff) o.handoff = tag.dataset.handoff;
   try { if (sessionStorage.getItem("agl-seen")) return; sessionStorage.setItem("agl-seen", "1"); } catch (e) {}
-  ArchgenLoader.mount("route", o);
+  ArchgenLoader.mount("route");
 })();
 </script>
 
@@ -1760,7 +1676,7 @@ ArchgenLoader.define("route", {
   const RAIL_ANCHORS = {
     home: '#s3d-h, #peek .poster-title .mega',
     blog: '.page-head .mega, .posts > li:last-child h2',
-    contact: '.page-head .mega, .contact'
+    contact: '.page-head .mega'
   };
   const SVGNS = 'http://www.w3.org/2000/svg';
   let railState = null;
@@ -2535,10 +2451,7 @@ void main(){
       document.body.appendChild(ta); ta.select(); let ok = false; try{ ok = document.execCommand('copy'); }catch(_){} ta.remove(); return ok; };
     try{ return navigator.clipboard.writeText(t).then(() => true, legacy); }catch(_){ return Promise.resolve(legacy()); }
   }
-  function copyText(t, btn){
-    writeClipboard(t).then(ok => { const o = btn.dataset.label || (btn.dataset.label = btn.textContent); btn.textContent = ok ? 'Copied' : 'Select and copy'; if(ok) setTimeout(() => btn.textContent = o, 1400); });
-  }
-  // every email address on the site copies itself instead of opening a mail app ("Open in mail app" on Contact still opens it)
+  // every email address on the site copies itself instead of opening a mail app
   const liveCopy = Object.assign(document.createElement('div'), {className: 'sr-only'}); liveCopy.setAttribute('role', 'status'); document.body.appendChild(liveCopy);
   function chip(el, addr, ok){
     document.querySelectorAll('.copied-chip').forEach(c => c.remove());
@@ -2549,8 +2462,7 @@ void main(){
     document.body.appendChild(c); setTimeout(() => c.remove(), 1400);
     liveCopy.textContent = ok ? `${addr} copied to clipboard` : '';
   }
-  document.querySelectorAll('a[href^="mailto:"]:not(#c-mail)').forEach(a => { a.dataset.email = a.getAttribute('href').slice(7).split('?')[0]; a.title = 'Click to copy'; });
-  document.querySelectorAll('.line-item .li-v.sel').forEach(b => { if(b.textContent.includes('@')){ b.dataset.email = b.textContent.trim(); b.title = 'Click to copy'; } });
+  document.querySelectorAll('a[href^="mailto:"]').forEach(a => { a.dataset.email = a.getAttribute('href').slice(7).split('?')[0]; a.title = 'Click to copy'; });
   document.addEventListener('click', e => {
     const el = e.target.closest('[data-email]'); if(!el) return;
     e.preventDefault();
@@ -2560,7 +2472,6 @@ void main(){
       if(!ok){ const s = getSelection(), rg = document.createRange(); rg.selectNodeContents(el); s.removeAllRanges(); s.addRange(rg); }   // last resort: select it
     });
   });
-  document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', e => copyText(b.dataset.copy, e.currentTarget)));
 
   /* ---------------- Blog + Contact: the dot-matrix die from Design A ----------------
      Only the chip, in the ice-paper palette: pad ring, SRAM banks, four cores, an NPU array and the buses, laid out on a
