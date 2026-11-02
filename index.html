@@ -1654,10 +1654,16 @@ ArchgenLoader.define("route", {
   const whenNear = (el, fn) => {
     if(!el) return;
     if(!('IntersectionObserver' in window)){ defer(fn); return; }
-    defer(() => { const o = new IntersectionObserver(es => { if(es.some(e => e.isIntersecting)){ o.disconnect(); idle(fn); } }, {rootMargin: '60% 0px'}); o.observe(el); });
+    // a heavy set-up (a WebGL context, shaders) never lands mid-scroll: if the page is moving, it waits for 'scrollidle'
+    const run = () => window.__scrolling ? addEventListener('scrollidle', run, {once: true}) : fn();
+    defer(() => { const o = new IntersectionObserver(es => { if(es.some(e => e.isIntersecting)){ o.disconnect(); idle(run); } }, {rootMargin: '60% 0px'}); o.observe(el); });
   };
   const ready = () => { loaded = true; setTimeout(() => idle(pump), 120); };   // after the page has loaded
   if(document.readyState === 'complete') ready(); else addEventListener('load', ready, {once: true});
+  // while the page scrolls, the canvas backdrops (ASCII horizon, footer PixelBlast) hold their frame, so every frame goes
+  // to the scroll; 160 ms after it stops, 'scrollidle' wakes them again
+  let scrollT = 0; window.__scrolling = false;
+  addEventListener('scroll', () => { window.__scrolling = true; clearTimeout(scrollT); scrollT = setTimeout(() => { window.__scrolling = false; dispatchEvent(new Event('scrollidle')); }, 160); }, {passive: true});
 
   /* ---------------- hero reveal: plays once per visit, when it can be seen ----------------
      The wipe and rise wait on their first frame (.stage without .go) until the hero is on screen in a visible page, so a
@@ -1944,11 +1950,12 @@ ArchgenLoader.define("route", {
       g.globalAlpha = 1;
     }
     function loop(now){
-      raf = 0; if(!on) return;
+      raf = 0; if(!on || window.__scrolling) return;   // held while scrolling; 'scrollidle' restarts it
       if(now - lastDraw > 32){ lastDraw = now; draw(now); }               // ~30 fps is plenty for a backdrop
       if(!reduce) raf = requestAnimationFrame(loop);
     }
     const start = () => { if(!raf && on) raf = requestAnimationFrame(loop); };
+    addEventListener('scrollidle', start);
     size();
     addEventListener('resize', () => { size(); if(reduce) draw(performance.now()); }, {passive:true});
     addEventListener('pointermove', e => { const r = wrap.getBoundingClientRect(); if(e.clientY < r.top || e.clientY > r.bottom){ mx = my = -1e5; return; } mx = e.clientX - r.left; my = e.clientY - r.top; }, {passive:true});
@@ -2105,7 +2112,7 @@ void main(){
       layout(); stepCells(0); draw(); wake();
     }
     function frame(now){
-      raf = 0; if(!visible || document.hidden || window.__footShown === false) return;
+      raf = 0; if(!visible || document.hidden || window.__footShown === false || window.__scrolling) return;   // held while scrolling
       if(coarse && last && now - last < 31) { raf = requestAnimationFrame(frame); return; }   // 30 fps on touch screens
       const dt = last ? Math.min((now - last) / 1000, .05) : 0; last = now;
       if(!reduce){ elapsed += dt; const a = P.driftAngle * Math.PI / 180; dX += Math.cos(a) * P.drift * dt * .05; dY += Math.sin(a) * P.drift * dt * .05; }
@@ -2130,6 +2137,7 @@ void main(){
     document.addEventListener('visibilitychange', wake);
     new ResizeObserver(resize).observe(box);
     new IntersectionObserver(es => { visible = es.some(x => x.isIntersecting); if(visible){ if(reduce){ stepCells(0); draw(); } wake(); } }).observe(box);
+    addEventListener('scrollidle', wake);
     addEventListener('footreveal', wake);   // the footer is pinned under the page, so it is "on screen" before it is uncovered
   });
 
