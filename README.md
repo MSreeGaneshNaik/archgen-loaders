@@ -56,8 +56,9 @@ archgen-loaders/
 │
 ├── assets/                         ── everything the pages load ──
 │   ├── blog/                       the posts' images, exactly as published (+ lossless .webp twins)
-│   ├── css/                        archgen-loader.css (the loading screen), booking.css (the meeting dialog)
-│   ├── js/                         archgen-loader-route.js (the loading screen), booking.js, analytics.js (Clarity, production only)
+│   ├── css/                        booking.css (the booking-calendar dialog)
+│   ├── js/                         booking.js (opens the booking calendar for every Contact link), footer-reveal.js (the footer's
+│   │                               slide-up entrance, Home and posts), analytics.js (Microsoft Clarity, production hosts only)
 │   ├── figures/              [gen] still posters of the 3D figures: <slug>-wide.webp, <slug>-narrow.webp
 │   ├── fonts/                      Cascadia Code (self-hosted woff2, licence in OFL.txt) + local-fonts.js, the file:// fallback
 │   ├── logo/                       archgen-labs-lockup.svg (the wordmark), the favicon and raster icons (512px, apple-touch)
@@ -68,8 +69,12 @@ archgen-loaders/
 │   ├── build.sh                    rebuilds everything generated, in order, then runs check.py
 │   ├── posts.json                  the posts' text and metadata, word for word as published
 │   ├── build_posts.py              posts.json + index.html (header, footer, font shim) → blog/posts/, the Blog list
-│   │                               in index.html, and the post entries of sitemap.xml
-│   ├── check.py                    fails the build if a page or its styles point to a missing file or #anchor
+│   │                               in index.html and the post entries of sitemap.xml; inlines tools/loader/ into every page
+│   ├── check.py                    fails the build on a missing file or #anchor, a repeated or off-site sitemap URL,
+│   │                               or a page whose canonical tag is not its own archgenlabs.com URL
+│   ├── loader/                     the loading screen's sources (inlined by build_posts.py; no page loads these files)
+│   │   ├── archgen-loader.css      its styles
+│   │   └── archgen-loader-route.js its script: the Route animation and its handoff to the header logo
 │   ├── figures/                    the 3D figures
 │   │   ├── three/
 │   │   │   ├── three-kit.js        shared kit: loading, colours, parts, framing, turning, frame loop
@@ -99,19 +104,19 @@ archgen-loaders/
 └── CHANGELOG.md                    what changed, round by round
 ```
 
-**Inside `index.html`**, top to bottom (each block starts with a `/* ---- name ---- */` comment, so search for the name):
+**Inside `index.html`**, top to bottom. The file opens with an overview comment, and the main `<style>` and `<script>` each open with a contents list; every part starts with a `/* ---- name ---- */` line, so search for the name. In the styles, later sections override earlier ones on purpose: add a rule next to the part it styles, not at the end.
 
 | Block | What it holds |
 |---|---|
 | `<head>` | scroll-to-top-on-open, the file:// font shim (between `fonts:head` markers, shared with the posts), meta tags, Open Graph, JSON-LD |
 | `<style>` | brand tokens (`:root`), then one section per part: top bar, content rail, hero and agent console, marquee, poster and editor, Blog list, Contact, footer, mobile menu, ASCII horizon, PixelBlast, news bar, 3D stack labels |
-| Loading screen (`#agl-css`, `#agl-js`) | inlined by the build from `assets/css/archgen-loader.css` and `assets/js/archgen-loader-route.js`; do not edit here |
+| Loading screen (`#agl-css`, `#agl-js`) | inlined by the build from `tools/loader/archgen-loader.css` and `tools/loader/archgen-loader-route.js`; do not edit here |
 | News bar, `<header class="bar">`, `#menu` | the strip above the header, the top bar and the phone menu (Blog 01, Contact 02) |
 | `<section data-page="home">` | hero (headline, Contact us on phones, asks on tablet and desktop, agent console in `.stage-pin`), "Built for physical design", chip-flow marquee, 3D stack, "Inside a run" poster and editor |
 | `<section data-page="blog">` | the post list `<ol id="posts">` [gen] |
 | `<section data-page="contact">` | "Let’s talk silicon." and a "Book a conversation" button (opens the booking dialog) |
-| `<footer>` | the call to talk, links, the wordmark (lifted into every post by build_posts.py) |
-| main `<script>` | scheduler, hero reveal (plays once), router, content rail, mobile menu, ASCII horizon, PixelBlast, news bar, hero scroll stack, the agent console, editor tabs, Blog/Contact dot-matrix die, scroll-in entrances |
+| `<footer>` | the call to talk, links, the wordmark (lifted into every post by build_posts.py); its entrance is `assets/js/footer-reveal.js` |
+| main `<script>` | scheduler (`defer`, `whenNear`, and `scrollidle`, which holds the canvas effects still while the page scrolls), hero reveal (plays once), router, content rail, mobile menu, ASCII horizon, PixelBlast, news bar, hero scroll stack, the agent console, editor tabs, email copy, Blog/Contact dot-matrix die, scroll-in entrances |
 | `#hl-kernel`, `#hl-host`, `#hl-figure` | the Hairline engine, its host for this page, and the chip-stack figure (copy of tools/hairline/stack.js) |
 
 **Where to go for a change**
@@ -126,6 +131,9 @@ archgen-loaders/
 | A figure card's title, description or key | `tools/figures/figures.json` | `sh tools/build.sh` |
 | Images in a post | `assets/blog/` (keep the file name) | `sh tools/build.sh` (re-reads image sizes) |
 | The logo | `assets/logo/archgen-labs-lockup.svg` and the inline copies in the header and footer of `index.html` | `sh tools/build.sh` (posts lift the header and footer) |
+| The loading screen | `tools/loader/` | `sh tools/build.sh` (inlines it into every page) |
+| The booking calendar link | `assets/js/booking.js` (`url`) | nothing |
+| The share card | `tools/social/og.html` | `node tools/social/og.mjs` |
 
 ## Building
 
@@ -253,7 +261,7 @@ Headless test browsers have no GPU; check motion on real hardware.
 
 `assets/logo/archgen-labs-lockup.svg` is the ARCHGEN LABS wordmark from archgenlabs.com, traced to a vector path; the header and footer use the same path inline.
 
-The loading screen is **Route**: pin one lights, the AG net routes out of it, then the red pin flies to the header and writes ARCHGEN LABS out of itself (about 2.75 s). It plays once per browser tab, a tap or key skips it, and reduced motion gets the finished logo and a fade. Its sources are `assets/js/archgen-loader-route.js` and `assets/css/archgen-loader.css`; the build inlines them into every page (first thing in `<body>`, and in `<head>`), so edit the sources and run `sh tools/build.sh`. It fires `archgen:loaded` on `<body>` when done, and the Home hero waits for that before its reveal.
+The loading screen is **Route**: pin one lights, the AG net routes out of it, then the red pin flies to the header and writes ARCHGEN LABS out of itself (about 2.75 s). It plays once per browser tab, a tap or key skips it, and reduced motion gets the finished logo and a fade. Its sources are `tools/loader/archgen-loader-route.js` and `tools/loader/archgen-loader.css`; the build inlines them into every page (first thing in `<body>`, and in `<head>`), so edit the sources and run `sh tools/build.sh`. It fires `archgen:loaded` on `<body>` when done, and the Home hero waits for that before its reveal.
 
 To make the share card again: `node tools/social/og.mjs` (edit `tools/social/og.html`).
 
